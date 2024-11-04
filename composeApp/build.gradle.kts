@@ -1,6 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -27,6 +28,9 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+        }
+        iosTarget.binaries.all {
+            linkerOpts("-lsqlite3")
         }
     }
 
@@ -58,6 +62,8 @@ kotlin {
 
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.navigation.compose)
+
+            implementation("co.touchlab:stately-common:2.0.5")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -66,6 +72,8 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native)
+            implementation("co.touchlab:stately-isolate:2.0.5")
+            implementation("co.touchlab:stately-iso-collections:2.0.5")
         }
     }
     sqldelight {

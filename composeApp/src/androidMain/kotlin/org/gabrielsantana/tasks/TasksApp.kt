@@ -11,13 +11,13 @@ class TasksApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val module = module {
+        val androidModule = module {
             factory<DatabaseDriverFactory> { AndroidDatabaseDriverFactory(this@TasksApp) }
         }
 
         startKoin {
             androidContext(this@TasksApp)
-            modules(module + appModule)
+            modules(androidModule + appModule)
         }
     }
 }

@@ -13,11 +13,13 @@ class AppViewModel(
 
     val name = MutableStateFlow("")
 
-
     init {
         viewModelScope.launch {
-            delay(2000L)
-            name.update { "Gabriel" }
+            for(x in 1..5) {
+                name.update { "Hello${".".repeat(x)}" }
+                delay(500L)
+            }
+            name.update { "Hello, Gabriel!" }
         }
     }
 
