@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    //id("app.cash.sqldelight").version("2.0.2").apply(false)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -36,6 +38,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.sqldelight.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -46,10 +49,22 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.sqldelight.coroutines)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.sqldelight.jvm)
+        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.native)
+        }
+    }
+    sqldelight {
+        databases {
+            create("TasksDatabase") {
+                packageName = "org.gabrielsantana.tasks"
+            }
         }
     }
 }
@@ -96,3 +111,4 @@ compose.desktop {
         }
     }
 }
+

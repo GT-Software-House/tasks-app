@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package org.gabrielsantana.tasks
 
@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -44,13 +44,12 @@ fun TaskItem(
     
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
     ) {
-        Text(
-            "Minimal checkbox"
-        )
+        Text(text = title)
         Checkbox(
-            checked = checked,
-            onCheckedChange = { checked = it }
+            checked = isChecked,
+            onCheckedChange = onCheckedChange
         )
     }
 }
