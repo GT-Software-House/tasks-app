@@ -2,35 +2,44 @@
 
 package org.gabrielsantana.tasks
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinContext
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.dsl.koinApplication
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
-fun App() {
-    MaterialTheme {
-        Scaffold(
-          topBar = {
-              TopAppBar(
-                  title = { Text("Tasks") }
-              )
-          }
-        ) {
-            Column(
-                modifier = Modifier.padding(it)
+fun App(
+    viewModel: AppViewModel = koinViewModel()
+) {
+    val name by viewModel.name.collectAsStateWithLifecycle()
+    KoinContext {
+        MaterialTheme {
+            Scaffold(
+              topBar = {
+                  TopAppBar(
+                      title = { Text(name) }
+                  )
+              }
             ) {
+                Column(
+                    modifier = Modifier.padding(it)
+                ) {
 
+                }
             }
         }
+
     }
 }
 
