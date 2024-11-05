@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     //id("app.cash.sqldelight").version("2.0.2").apply(false)
     alias(libs.plugins.sqldelight)
+    kotlin("plugin.serialization") version "2.0.20"
 }
 
 kotlin {
@@ -64,6 +65,7 @@ kotlin {
             implementation(libs.navigation.compose)
 
             implementation("co.touchlab:stately-common:2.0.5")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

@@ -2,44 +2,60 @@
 
 package org.gabrielsantana.tasks
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.createGraph
+import org.gabrielsantana.tasks.features.create.CreateTaskScreen
+import org.gabrielsantana.tasks.features.home.HomeScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.dsl.koinApplication
+
+enum class RootScreens(val title: String) {
+    Home("Home"),
+    CreateTask("Create task");
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 fun App(
-    viewModel: AppViewModel = koinViewModel()
+    viewModel: AppViewModel = koinViewModel(),
+    navController: NavHostController = rememberNavController()
 ) {
-    val name by viewModel.name.collectAsStateWithLifecycle()
-    KoinContext {
-        MaterialTheme {
-            Scaffold(
-              topBar = {
-                  TopAppBar(
-                      title = { Text(name) }
-                  )
-              }
-            ) {
-                Column(
-                    modifier = Modifier.padding(it)
-                ) {
-
-                }
+    MaterialTheme {
+        val graph = navController.createGraph(startDestination = RootScreens.Home.name) {
+            composable(RootScreens.Home.name) {
+                HomeScreen(
+                    onNavigateToCreateTask = {
+                        navController.navigate(RootScreens.CreateTask.name)
+                    }
+                )
+            }
+            composable(RootScreens.CreateTask.name) {
+                CreateTaskScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
-
+        NavHost(
+            navController = navController,
+            graph = graph
+        )
     }
 }
 
@@ -50,7 +66,7 @@ fun TaskItem(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -62,3 +78,4 @@ fun TaskItem(
         )
     }
 }
+
