@@ -3,10 +3,6 @@
 package org.gabrielsantana.tasks
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,11 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
-import org.gabrielsantana.tasks.features.create.CreateTaskScreen
-import org.gabrielsantana.tasks.features.home.HomeScreen
+import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
+import org.gabrielsantana.tasks.features.home.ui.HomeScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -32,7 +27,6 @@ enum class RootScreens(val title: String) {
 @Composable
 @Preview
 fun App(
-    viewModel: AppViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     MaterialTheme {
@@ -47,7 +41,9 @@ fun App(
             composable(RootScreens.CreateTask.name) {
                 CreateTaskScreen(
                     onNavigateBack = {
-                        navController.popBackStack()
+                        if (navController.currentBackStackEntry?.destination?.route == RootScreens.CreateTask.name) {
+                            navController.popBackStack()
+                        }
                     }
                 )
             }

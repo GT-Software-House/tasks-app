@@ -1,4 +1,4 @@
-package org.gabrielsantana.tasks.features.home
+package org.gabrielsantana.tasks.features.home.ui
 
 import androidx.lifecycle.ViewModel
 

@@ -66,6 +66,8 @@ kotlin {
 
             implementation("co.touchlab:stately-common:2.0.5")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

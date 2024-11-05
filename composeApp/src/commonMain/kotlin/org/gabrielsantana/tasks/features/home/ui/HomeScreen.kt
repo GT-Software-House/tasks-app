@@ -1,4 +1,4 @@
-package org.gabrielsantana.tasks.features.home
+package org.gabrielsantana.tasks.features.home.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
