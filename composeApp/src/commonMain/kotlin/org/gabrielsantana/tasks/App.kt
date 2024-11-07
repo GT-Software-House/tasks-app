@@ -54,24 +54,3 @@ fun App(
         )
     }
 }
-
-@Composable
-fun TaskItem(
-    title: String,
-    isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Text(text = title)
-        Checkbox(
-            checked = isChecked,
-            onCheckedChange = onCheckedChange
-        )
-    }
-}
-
