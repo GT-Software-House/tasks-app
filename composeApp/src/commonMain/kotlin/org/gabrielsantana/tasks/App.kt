@@ -31,11 +31,16 @@ fun App(
 ) {
     MaterialTheme {
         val graph = navController.createGraph(startDestination = RootScreens.Home.name) {
-            composable(RootScreens.Home.name) {
+            composable(RootScreens.Home.name) { entry ->
+                val taskCreated = entry.savedStateHandle.get<Boolean>("taskCreatedSuccessfully") == true
                 HomeScreen(
                     onNavigateToCreateTask = {
                         navController.navigate(RootScreens.CreateTask.name)
-                    }
+                    },
+                    taskCreated = taskCreated,
+                    onTaskCreated = {
+                        navController.currentBackStackEntry?.savedStateHandle?.set("taskCreatedSuccessfully", false)
+                    },
                 )
             }
             composable(RootScreens.CreateTask.name) {
@@ -43,8 +48,9 @@ fun App(
                     onNavigateBack = {
                         if (navController.currentBackStackEntry?.destination?.route == RootScreens.CreateTask.name) {
                             navController.popBackStack()
+                            if (it) navController.currentBackStackEntry?.savedStateHandle?.set("taskCreatedSuccessfully", true)
                         }
-                    }
+                    },
                 )
             }
         }

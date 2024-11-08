@@ -22,14 +22,18 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CreateTaskScreen(
-    onNavigateBack: () -> Unit,
+    onNavigateBack: (taskCreated: Boolean) -> Unit,
     viewModel: CreateTaskViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(uiState.taskCreatedSuccessfully) {
+        if (uiState.taskCreatedSuccessfully) onNavigateBack(true)
+    }
+
     CreateTaskContent(
         uiState = uiState,
-        onNavigationBackClick = onNavigateBack,
+        onNavigationBackClick = { onNavigateBack(false) },
         onCreateClick = viewModel::createTask,
         onDescriptionChange = viewModel::updateDescription,
         onTitleChange = viewModel::updateTitle,
@@ -49,14 +53,7 @@ fun CreateTaskContent(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState.taskCreatedSuccessfully) {
-        if (uiState.taskCreatedSuccessfully) {
-            scope.launch {
-                snackbarHostState.showSnackbar("Task created", "Go back tasks")
-                onNavigationBackClick()
-            }
-        }
-    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)

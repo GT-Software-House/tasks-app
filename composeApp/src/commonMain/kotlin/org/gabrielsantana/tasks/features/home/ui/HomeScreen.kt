@@ -1,7 +1,9 @@
 package org.gabrielsantana.tasks.features.home.ui
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,13 +13,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -25,42 +26,66 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen(
+    taskCreated: Boolean,
+    onTaskCreated: () -> Unit,
     onNavigateToCreateTask: () -> Unit,
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val hostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(taskCreated) {
+        if (taskCreated) {
+            hostState.showSnackbar("Task created")
+            onTaskCreated()
+        }
+    }
+
+
     HomeContent(
         uiState = uiState,
-        onCreateTaskClick = onNavigateToCreateTask
+        hostState = hostState,
+        onCreateTaskClick = onNavigateToCreateTask,
+        onTaskCheckedChange = viewModel::updateTask,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeContent(
     uiState: HomeUiState,
+    hostState: SnackbarHostState = remember { SnackbarHostState() },
     onCreateTaskClick: () -> Unit,
+    onTaskCheckedChange: (newValue: Boolean, model: TaskUiModel) -> Unit
 ) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Home") }
+                title = { Text("Home") },
+                scrollBehavior = scrollBehavior,
             )
         },
+        snackbarHost = { SnackbarHost(hostState) },
         floatingActionButton = {
             FloatingActionButton(onClick = onCreateTaskClick) {
                 Icon(Icons.Default.Add, contentDescription = "Create task")
             }
-        }
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) {
-        LazyColumn(Modifier.padding(it)) {
+        LazyColumn(
+            contentPadding = PaddingValues(start = 16.dp , end = 16.dp, bottom = 100.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(it)
+        ) {
             items(uiState.tasks, key = { task -> task.id }) { task ->
                 TaskItem(
                     title = task.title,
                     description = task.description,
                     isChecked = task.isChecked,
-                    onCheckedChange = {},
-                    Modifier.padding(vertical = 6.dp, horizontal = 10.dp)
+                    onCheckedChange = { onTaskCheckedChange(it, task) },
+                    Modifier.animateItem()
                 )
             }
         }
@@ -97,6 +122,7 @@ private fun DefaultPreview() {
                 TaskUiModel(3, "Task 3", "Description 3", false),
             )
         ),
-        onCreateTaskClick = {}
+        onCreateTaskClick = {},
+        onTaskCheckedChange = { _, _ -> },
     )
 }
