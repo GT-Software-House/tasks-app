@@ -6,7 +6,7 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 
 class DesktopDatabaseDriverFactory : DatabaseDriverFactory {
     override fun createDriver(): SqlDriver {
-        val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+        val driver: SqlDriver = JdbcSqliteDriver("jdbc:sqlite:test.db")
         TasksDatabase.Schema.create(driver)
         return driver
     }
