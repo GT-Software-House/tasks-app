@@ -165,18 +165,21 @@ fun HomeContent(
                     isCheckable = !uiState.isSelectionMode,
                     onCheckedChange = { onTaskCheckedChange(it, task) },
                     isSelected = uiState.selectedTasksIndex.contains(uiState.tasks.indexOf(task)),
-                    modifier = Modifier.animateItem().clip(CardDefaults.shape).combinedClickable(
-                        onLongClick = {
-                            if (uiState.selectedTasksIndex.isEmpty()) {
-                                onSelectTaskIndex(uiState.tasks.indexOf(task))
+                    modifier = Modifier
+                        .animateItem()
+                        .clip(CardDefaults.shape)
+                        .combinedClickable(
+                            onLongClick = {
+                                if (uiState.selectedTasksIndex.isEmpty()) {
+                                    onSelectTaskIndex(uiState.tasks.indexOf(task))
+                                }
+                            },
+                            onClick = {
+                                if (uiState.selectedTasksIndex.isNotEmpty()) {
+                                    onSelectTaskIndex(uiState.tasks.indexOf(task))
+                                }
                             }
-                        },
-                        onClick = {
-                            if (uiState.selectedTasksIndex.isNotEmpty()) {
-                                onSelectTaskIndex(uiState.tasks.indexOf(task))
-                            }
-                        }
-                    ),
+                        ).fillMaxWidth(),
                 )
             }
         }
@@ -195,7 +198,7 @@ fun TaskItem(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         colors = if (isSelected) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer) else CardDefaults.cardColors()
     ) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
