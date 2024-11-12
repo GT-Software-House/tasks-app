@@ -21,6 +21,25 @@ class HomeViewModel(
         loadTasks()
     }
 
+    fun selectTask(taskIndex: Int) = _uiState.update { state ->
+        if (state.selectedTasksIndex.contains(taskIndex)) {
+            state.copy(selectedTasksIndex = state.selectedTasksIndex.toMutableSet().apply { remove(taskIndex) })
+        } else {
+            state.copy(selectedTasksIndex = state.selectedTasksIndex.toMutableSet().apply { add(taskIndex) })
+        }
+    }
+
+    fun clearSelectedTasks() = _uiState.update { state ->
+        state.copy(selectedTasksIndex = emptySet())
+    }
+
+    fun deleteSelectedTasks(): Unit = with(_uiState.value) {
+        selectedTasksIndex.forEach { taskIndex ->
+            tasksRepository.deleteTask(tasks[taskIndex].id.toLong())
+        }
+        clearSelectedTasks()
+    }
+
     fun selectTaskFilter(newFilter: TaskFilter) {
         viewModelScope.launch {
             val tasks = tasksRepository.getTasks().first()
@@ -35,7 +54,12 @@ class HomeViewModel(
     fun loadTasks() = viewModelScope.launch {
         tasksRepository.getTasks().collect { value ->
             _uiState.update { state ->
-                val newTasks = value.map { it.toUiModel() }
+                val newTasks = value
+                    .filter {
+                        _uiState.value.selectedTaskFilter.predicate(it)
+                    }.map {
+                        it.toUiModel()
+                    }
                 state.copy(tasks = newTasks)
             }
         }
