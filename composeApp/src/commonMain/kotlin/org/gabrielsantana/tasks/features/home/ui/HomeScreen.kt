@@ -158,6 +158,7 @@ fun HomeContent(
                 Spacer(Modifier.height(4.dp))
             }
             items(uiState.tasks, key = { task -> task.id }) { task ->
+                val taskIndex = uiState.tasks.indexOf(task)
                 TaskItem(
                     title = task.title,
                     description = task.description,
@@ -170,13 +171,15 @@ fun HomeContent(
                         .clip(CardDefaults.shape)
                         .combinedClickable(
                             onLongClick = {
-                                if (uiState.selectedTasksIndex.isEmpty()) {
-                                    onSelectTaskIndex(uiState.tasks.indexOf(task))
+                                if (!uiState.isSelectionMode) {
+                                    onSelectTaskIndex(taskIndex)
                                 }
                             },
                             onClick = {
-                                if (uiState.selectedTasksIndex.isNotEmpty()) {
-                                    onSelectTaskIndex(uiState.tasks.indexOf(task))
+                                if (uiState.isSelectionMode) {
+                                    onSelectTaskIndex(taskIndex)
+                                } else {
+                                    //some event for click, like expand the cards
                                 }
                             }
                         ).fillMaxWidth(),
@@ -201,13 +204,13 @@ fun TaskItem(
         modifier = modifier,
         colors = if (isSelected) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer) else CardDefaults.cardColors()
     ) {
-        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.padding(top = 12.dp, bottom = 12.dp, end = 12.dp), verticalAlignment = Alignment.CenterVertically) {
             AnimatedVisibility(isSelected) {
-                Row {
+                Row(modifier = Modifier.padding(start = 12.dp)) {
                     Icon(Icons.Default.CheckCircle, null, tint = MaterialTheme.colorScheme.primary)
-                    Spacer(Modifier.width(8.dp))
                 }
             }
+            Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(text = title, style = MaterialTheme.typography.titleLarge)
                 Text(text = description, style = MaterialTheme.typography.bodyMedium)
