@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.reload.ComposeHotRun
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -10,7 +11,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
     //id("app.cash.sqldelight").version("2.0.2").apply(false)
     alias(libs.plugins.sqldelight)
-    kotlin("plugin.serialization") version "2.0.20"
+    kotlin(libs.plugins.kotlinSerialization.get().pluginId).version(libs.versions.kotlin).apply(false)
+    alias(libs.plugins.composeHotReload)
 }
 
 kotlin {
@@ -64,10 +66,12 @@ kotlin {
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.navigation.compose)
 
-            implementation("co.touchlab:stately-common:2.0.5")
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+            implementation(libs.stately.common)
+            implementation(libs.kotlinx.serialization.json)
 
-            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+            implementation(libs.lifecycle.viewmodel.compose)
+
+            implementation(libs.kotlinx.datetime)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -76,8 +80,8 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native)
-            implementation("co.touchlab:stately-isolate:2.0.5")
-            implementation("co.touchlab:stately-iso-collections:2.0.5")
+            implementation(libs.stately.isolate)
+            implementation(libs.stately.iso.collections)
         }
     }
     sqldelight {
@@ -128,7 +132,15 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.gabrielsantana.tasks"
             packageVersion = "1.0.0"
+
+            macOS {
+                modules("jdk.crypto.ec")
+            }
         }
     }
 }
+tasks.register<ComposeHotRun>("runHot") {
+    mainClass.set("org.gabrielsantana.tasks.MainHotReloadKt")
+}
+
 

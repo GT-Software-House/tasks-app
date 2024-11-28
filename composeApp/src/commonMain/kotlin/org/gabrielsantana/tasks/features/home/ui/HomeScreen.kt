@@ -11,10 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,6 +32,7 @@ fun HomeScreen(
     taskCreated: Boolean,
     onTaskCreated: () -> Unit,
     onNavigateToCreateTask: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -56,6 +54,7 @@ fun HomeScreen(
         onSelectTaskIndex = viewModel::selectTask,
         onClearSelection = viewModel::clearSelectedTasks,
         onDeleteClick = viewModel::deleteSelectedTasks,
+        onSettingsClick = onNavigateToSettings
     )
 }
 
@@ -66,7 +65,8 @@ fun HomeContent(
     hostState: SnackbarHostState = remember { SnackbarHostState() },
     onCreateTaskClick: () -> Unit,
     onSelectTaskFilter: (TaskFilter) -> Unit,
-    onSelectTaskIndex: (Int) -> Unit,
+    onSettingsClick: () -> Unit,
+    onSelectTaskIndex: (Int ) -> Unit,
     onClearSelection: () -> Unit,
     onTaskCheckedChange: (newValue: Boolean, model: TaskUiModel) -> Unit,
     onDeleteClick: () -> Unit
@@ -122,6 +122,11 @@ fun HomeContent(
                     TopAppBar(
                         title = { Text("Your tasks") },
                         scrollBehavior = scrollBehavior,
+                        actions = {
+                            IconButton(onClick = onSettingsClick) {
+                                Icon(Icons.Default.Settings, null)
+                            }
+                        }
                     )
                 }
             }
@@ -256,6 +261,7 @@ private fun DefaultPreview() {
         onSelectTaskFilter = {},
         onSelectTaskIndex = {},
         onClearSelection = {},
-        onDeleteClick = {}
+        onDeleteClick = {},
+        onSettingsClick = {}
     )
 }

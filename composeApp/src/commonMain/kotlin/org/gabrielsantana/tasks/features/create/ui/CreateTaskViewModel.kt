@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.*
 import org.gabrielsantana.tasks.data.TasksRepository
 
 class CreateTaskViewModel(
@@ -29,6 +30,8 @@ class CreateTaskViewModel(
             _uiState.update { it.copy(isDescriptionInvalid = true) }
         }
         if (uiState.value.title.isNotEmpty() && uiState.value.description.isNotEmpty()) {
+            val instant = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+
             tasksRepository.createTask(uiState.value.title, uiState.value.description)
             _uiState.update { it.copy(taskCreatedSuccessfully = true) }
         }

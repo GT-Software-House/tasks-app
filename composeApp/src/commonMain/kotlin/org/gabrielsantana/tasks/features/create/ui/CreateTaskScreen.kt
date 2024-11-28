@@ -85,10 +85,10 @@ fun CreateTaskContent(
                 onValueChange = onTitleChange,
                 label = { Text("Title") },
                 supportingText = {
-                    if (uiState.isDescriptionInvalid == true)
-                        Text("A descrição não pode ser vazia")
+                    if (uiState.isTitleInvalid == true)
+                        Text("O título não pode ser vazia")
                 },
-                isError = uiState.isDescriptionInvalid == true,
+                isError = uiState.isTitleInvalid == true,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(

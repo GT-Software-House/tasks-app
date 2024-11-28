@@ -1,19 +1,22 @@
 package org.gabrielsantana.tasks
 
-import androidx.compose.foundation.ContextMenuArea
-import androidx.compose.foundation.ContextMenuItem
-import androidx.compose.foundation.ContextMenuState
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.LocalTextContextMenu
 import androidx.compose.foundation.text.TextContextMenu
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.TextContextMenu.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import org.gabrielsantana.tasks.di.appModule
 import org.gabrielsantana.tasks.di.desktopModule
+import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.koin.core.context.startKoin
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -24,20 +27,11 @@ fun main() {
     application {
         Window(
             onCloseRequest = ::exitApplication,
-            title = "Tasks",
+            title = "Tasks - Development",
         ) {
-            App()
+            DevelopmentEntryPoint {
+                App()
+            }
         }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-object EmptyContextMenu : TextContextMenu {
-    @OptIn(ExperimentalFoundationApi::class)
-    @Composable
-    override fun Area(textManager: TextContextMenu.TextManager, state: ContextMenuState, content: @Composable () -> Unit) {
-        ContextMenuArea({
-            listOf(ContextMenuItem("sdfsdfds") {})
-        }, state, content = content)
     }
 }
