@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    //id("app.cash.sqldelight").version("2.0.2").apply(false)
     alias(libs.plugins.sqldelight)
     kotlin(libs.plugins.kotlinSerialization.get().pluginId).version(libs.versions.kotlin).apply(false)
     alias(libs.plugins.composeHotReload)
