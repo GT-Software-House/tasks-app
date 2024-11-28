@@ -14,6 +14,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import org.gabrielsantana.tasks.di.appModule
 import org.gabrielsantana.tasks.di.desktopModule
+import org.gabrielsantana.tasks.ui.App
 import org.koin.core.context.startKoin
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -28,16 +29,5 @@ fun main() {
         ) {
             App()
         }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-object EmptyContextMenu : TextContextMenu {
-    @OptIn(ExperimentalFoundationApi::class)
-    @Composable
-    override fun Area(textManager: TextContextMenu.TextManager, state: ContextMenuState, content: @Composable () -> Unit) {
-        ContextMenuArea({
-            listOf(ContextMenuItem("sdfsdfds") {})
-        }, state, content = content)
     }
 }

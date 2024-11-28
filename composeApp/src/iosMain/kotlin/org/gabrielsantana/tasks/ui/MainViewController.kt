@@ -1,4 +1,4 @@
-package org.gabrielsantana.tasks
+package org.gabrielsantana.tasks.ui
 
 import androidx.compose.ui.window.ComposeUIViewController
 

@@ -16,6 +16,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import org.gabrielsantana.tasks.di.appModule
 import org.gabrielsantana.tasks.di.desktopModule
+import org.gabrielsantana.tasks.ui.App
 import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.koin.core.context.startKoin
 

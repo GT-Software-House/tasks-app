@@ -1,4 +1,4 @@
-package org.gabrielsantana.tasks
+package org.gabrielsantana.tasks.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

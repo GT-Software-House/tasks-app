@@ -1,10 +1,10 @@
-package org.gabrielsantana.tasks
+package org.gabrielsantana.tasks.data.source
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.first
+import org.gabrielsantana.tasks.TasksDatabase
 
 class TasksLocalDataSource(private val db: TasksDatabase) {
     private val queries = db.taskQueries

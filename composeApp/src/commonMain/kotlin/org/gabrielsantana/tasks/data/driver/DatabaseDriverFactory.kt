@@ -1,4 +1,4 @@
-package org.gabrielsantana.tasks
+package org.gabrielsantana.tasks.data.driver
 
 import app.cash.sqldelight.db.SqlDriver
 

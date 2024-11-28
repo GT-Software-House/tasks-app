@@ -1,4 +1,4 @@
-package org.gabrielsantana.tasks
+package org.gabrielsantana.tasks.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*

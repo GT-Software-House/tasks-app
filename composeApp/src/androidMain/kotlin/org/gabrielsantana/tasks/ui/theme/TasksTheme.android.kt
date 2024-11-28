@@ -1,4 +1,4 @@
-package org.gabrielsantana.tasks
+package org.gabrielsantana.tasks.ui.theme
 
 import android.os.Build
 import androidx.compose.material3.MaterialTheme

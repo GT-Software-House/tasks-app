@@ -1,6 +1,7 @@
 package org.gabrielsantana.tasks.data
 
-import org.gabrielsantana.tasks.TasksLocalDataSource
+import org.gabrielsantana.tasks.data.source.TasksLocalDataSource
+
 
 class TasksRepository(private val tasksDataSource: TasksLocalDataSource) {
 

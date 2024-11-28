@@ -1,16 +1,12 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package org.gabrielsantana.tasks
+package org.gabrielsantana.tasks.ui
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,8 +16,8 @@ import androidx.navigation.createGraph
 import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.tasks.features.home.ui.HomeScreen
 import org.gabrielsantana.tasks.features.settings.SettingsScreen
+import org.gabrielsantana.tasks.ui.theme.TasksTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.viewmodel.koinViewModel
 
 enum class RootScreens(val title: String) {
     Home("Home"),
