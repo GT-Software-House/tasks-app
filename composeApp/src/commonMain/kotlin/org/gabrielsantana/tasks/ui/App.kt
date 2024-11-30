@@ -34,7 +34,8 @@ fun App(
 ) {
     TasksTheme(
         darkTheme = appState.isDarkMode,
-        dynamicColor = appState.isDynamicColor
+        isDynamicColorEnabled = appState.isDynamicColorsEnabled,
+        dynamicColorType = appState.dynamicColorType
     ) {
         val graph = navController.createGraph(startDestination = RootScreens.Home.name) {
             composable(RootScreens.Home.name) { entry ->
@@ -65,7 +66,8 @@ fun App(
             dialog(RootScreens.Settings.name) {
                 SettingsScreen(
                     themeMode = appState.themeMode,
-                    isDynamicColorsEnabled = appState.isDynamicColor,
+                    appState = appState,
+                    isDynamicColorsEnabled = appState.isDynamicColorsEnabled,
                     onChangeThemeMode = { themeMode ->
                         appState.themeMode = themeMode
                     },
@@ -73,8 +75,8 @@ fun App(
                         navController.popBackStack()
                     },
                     onToggleDynamicColors = { isDynamicColors ->
-                        appState.isDynamicColor = isDynamicColors
-                    }
+                        appState.isDynamicColorsEnabled = isDynamicColors
+                    },
                 )
             }
         }

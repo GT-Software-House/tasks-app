@@ -8,6 +8,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
+import org.gabrielsantana.tasks.ui.App
+import org.gabrielsantana.tasks.ui.isDarkMode
+import org.gabrielsantana.tasks.ui.rememberAppState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
