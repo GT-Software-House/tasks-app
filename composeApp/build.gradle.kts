@@ -1,5 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.reload.ComposeHotRun
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -10,11 +11,16 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
-    kotlin(libs.plugins.kotlinSerialization.get().pluginId).version(libs.versions.kotlin).apply(false)
+    //kotlin(libs.plugins.kotlinSerialization.get().pluginId).version(libs.versions.kotlin).apply(false)
     alias(libs.plugins.composeHotReload)
 }
 
 kotlin {
+    compilerOptions {
+        // Common compiler options applied to all Kotlin source sets
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -52,25 +58,23 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
+            implementation(compose.material3AdaptiveNavigationSuite)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.sqldelight.coroutines)
-            // koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose.viewmodel.navigation)
-
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.navigation.compose)
-
             implementation(libs.stately.common)
             implementation(libs.kotlinx.serialization.json)
-
             implementation(libs.lifecycle.viewmodel.compose)
-
             implementation(libs.kotlinx.datetime)
+            implementation(libs.materialKolor)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -121,6 +125,10 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+}
+
+composeCompiler {
+    featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
 }
 
 compose.desktop {
