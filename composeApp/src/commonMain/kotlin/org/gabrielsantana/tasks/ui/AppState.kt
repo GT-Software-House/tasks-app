@@ -9,8 +9,6 @@ import org.gabrielsantana.tasks.features.settings.ColorType
 class AppState {
     var themeMode by mutableStateOf<ThemeMode>(ThemeMode.System)
     var isDynamicColorsEnabled by mutableStateOf(false)
-    val colors = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Magenta, Color.Cyan)
-    var dynamicColorType by mutableStateOf<ColorType>(ColorType.CustomColor(colors[0]))
 }
 
 val AppState.isDarkMode: Boolean

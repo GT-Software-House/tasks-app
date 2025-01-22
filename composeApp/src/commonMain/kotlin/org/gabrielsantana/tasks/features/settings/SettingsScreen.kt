@@ -26,12 +26,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +49,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import org.gabrielsantana.tasks.ui.AppState
+import org.gabrielsantana.tasks.ui.ColorSchemeProvider
 import org.gabrielsantana.tasks.ui.ThemeMode
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -58,10 +61,10 @@ interface ColorType {
 fun SettingsScreen(
     themeMode: ThemeMode,
     //TODO remove it
-    appState: AppState,
     isDynamicColorsEnabled: Boolean,
     onChangeThemeMode: (ThemeMode) -> Unit,
     onToggleDynamicColors: (Boolean) -> Unit,
+    onColorSchemeProvider: (ColorSchemeProvider) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -109,12 +112,14 @@ fun SettingsScreen(
                     isChecked = isDynamicColorsEnabled,
                     onToggle = onToggleDynamicColors
                 )
-
+                var selectedIndex by remember { mutableIntStateOf(0) }
                 AnimatedVisibility(isDynamicColorsEnabled) {
                     ColorSelector(
-                        colors = appState.colors,
-                        selectedColor = appState.dynamicColorType,
-                        onSelectColor = { appState.dynamicColorType = it },
+                        selectedIndex = selectedIndex,
+                        onSelect = { index, colorSchemeProvider ->
+                            selectedIndex = index
+                            onColorSchemeProvider(colorSchemeProvider)
+                        },
                         modifier = Modifier.horizontalScroll(rememberScrollState())
                     )
                 }
@@ -127,13 +132,18 @@ fun SettingsScreen(
     }
 }
 
+
+
+
+
 @Composable
 expect fun ColorSelector(
-    colors: List<Color>,
-    selectedColor: ColorType,
-    onSelectColor: (ColorType) -> Unit,
-    modifier: Modifier = Modifier
+    selectedIndex: Int,
+    onSelect: (index: Int, colorSchemeProvider: ColorSchemeProvider) -> Unit,
+    modifier: Modifier
 )
+
+internal val colors = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Magenta, Color.Cyan)
 
 @Composable
 fun CustomItem(

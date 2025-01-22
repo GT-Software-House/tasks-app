@@ -7,6 +7,11 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,7 +21,10 @@ import androidx.navigation.createGraph
 import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.tasks.features.home.ui.HomeScreen
 import org.gabrielsantana.tasks.features.settings.SettingsScreen
+import org.gabrielsantana.tasks.ui.theme.DarkColorScheme
+import org.gabrielsantana.tasks.ui.theme.LightColorScheme
 import org.gabrielsantana.tasks.ui.theme.TasksTheme
+import org.gabrielsantana.tasks.ui.theme.Typography
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 enum class RootScreens(val title: String) {
@@ -25,28 +33,51 @@ enum class RootScreens(val title: String) {
     Settings("Settings");
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+fun interface ColorSchemeProvider {
+    @Composable
+    fun provide(isDarkTheme: Boolean): ColorScheme
+
+    companion object {
+        val DEFAULT = ColorSchemeProvider { isDarkTheme ->
+            if (isDarkTheme) DarkColorScheme else LightColorScheme
+        }
+    }
+}
+
+
 @Composable
 @Preview
 fun App(
     navController: NavHostController = rememberNavController(),
     appState: AppState = rememberAppState()
 ) {
-    TasksTheme(
-        darkTheme = appState.isDarkMode,
-        isDynamicColorEnabled = appState.isDynamicColorsEnabled,
-        dynamicColorType = appState.dynamicColorType
+    val darkTheme = appState.isDarkMode
+    var colorSchemeProvider by remember {
+        mutableStateOf<ColorSchemeProvider?>(null)
+    }
+    val colorScheme = if (appState.isDynamicColorsEnabled) {
+        colorSchemeProvider?.provide(darkTheme) ?: ColorSchemeProvider.DEFAULT.provide(darkTheme)
+    } else ColorSchemeProvider.DEFAULT.provide(
+        darkTheme
+    )
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
     ) {
         val graph = navController.createGraph(startDestination = RootScreens.Home.name) {
             composable(RootScreens.Home.name) { entry ->
-                val taskCreated = entry.savedStateHandle.get<Boolean>("taskCreatedSuccessfully") == true
+                val taskCreated =
+                    entry.savedStateHandle.get<Boolean>("taskCreatedSuccessfully") == true
                 HomeScreen(
                     onNavigateToCreateTask = {
                         navController.navigate(RootScreens.CreateTask.name)
                     },
                     taskCreated = taskCreated,
                     onTaskCreated = {
-                        navController.currentBackStackEntry?.savedStateHandle?.set("taskCreatedSuccessfully", false)
+                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                            "taskCreatedSuccessfully",
+                            false
+                        )
                     },
                     onNavigateToSettings = {
                         navController.navigate(RootScreens.Settings.name)
@@ -58,7 +89,10 @@ fun App(
                     onNavigateBack = {
                         if (navController.currentBackStackEntry?.destination?.route == RootScreens.CreateTask.name) {
                             navController.popBackStack()
-                            if (it) navController.currentBackStackEntry?.savedStateHandle?.set("taskCreatedSuccessfully", true)
+                            if (it) navController.currentBackStackEntry?.savedStateHandle?.set(
+                                "taskCreatedSuccessfully",
+                                true
+                            )
                         }
                     },
                 )
@@ -66,7 +100,6 @@ fun App(
             dialog(RootScreens.Settings.name) {
                 SettingsScreen(
                     themeMode = appState.themeMode,
-                    appState = appState,
                     isDynamicColorsEnabled = appState.isDynamicColorsEnabled,
                     onChangeThemeMode = { themeMode ->
                         appState.themeMode = themeMode
@@ -77,6 +110,9 @@ fun App(
                     onToggleDynamicColors = { isDynamicColors ->
                         appState.isDynamicColorsEnabled = isDynamicColors
                     },
+                    onColorSchemeProvider = {
+                        colorSchemeProvider = it
+                    }
                 )
             }
         }
@@ -90,7 +126,8 @@ fun App(
             exitTransition = {
                 slideOutOfContainer(
                     AnimatedContentTransitionScope.SlideDirection.Start,
-                    tween(400, easing = FastOutSlowInEasing))
+                    tween(400, easing = FastOutSlowInEasing)
+                )
             },
             popEnterTransition = {
                 slideIntoContainer(

@@ -45,6 +45,7 @@ kotlin {
     jvm("desktop")
 
     sourceSets {
+
         val desktopMain by getting
 
         androidMain.dependencies {
@@ -75,6 +76,11 @@ kotlin {
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.materialKolor)
+//            implementation(libs.datastore)
+//            implementation(libs.datastore.preferences)
+            implementation("com.russhwolf:multiplatform-settings-no-arg:1.2.0")
+            implementation("com.russhwolf:multiplatform-settings-coroutines:1.2.0")
+            implementation("com.russhwolf:multiplatform-settings-serialization:1.2.0")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -93,6 +99,9 @@ kotlin {
                 packageName = "org.gabrielsantana.tasks"
             }
         }
+    }
+    sourceSets.all {
+        languageSettings.enableLanguageFeature("ExplicitBackingFields")
     }
 }
 
