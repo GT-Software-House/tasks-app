@@ -83,7 +83,7 @@ struct CheckboxStyle: ToggleStyle {
     }
 }
 
-extension TaskUiModel: Identifiable {
+extension TaskUiModel: @retroactive Identifiable {
 }
 
 
