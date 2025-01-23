@@ -4,21 +4,25 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.cash.sqldelight.coroutines.mapToList
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.gabrielsantana.tasks.Task
 import org.gabrielsantana.tasks.data.TasksRepository
+import kotlin.time.Duration.Companion.milliseconds
 
 class HomeViewModel(
-    private val savedStateHandle: SavedStateHandle,
     private val tasksRepository: TasksRepository
 ) : ViewModel() {
+
+    private var getTasksJob: Job? = null
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
-        loadTasks()
+        getTasksJob = viewModelScope.launch { loadTasks() }
     }
 
     fun selectTask(taskIndex: Int) = _uiState.update { state ->
@@ -40,18 +44,41 @@ class HomeViewModel(
         clearSelectedTasks()
     }
 
-    fun selectTaskFilter(newFilter: TaskFilter) {
-        viewModelScope.launch {
-            val tasks = tasksRepository.getTasks().first()
-            _uiState.update {
-                it.copy(
-                    selectedTaskFilter = newFilter,
-                    tasks = tasks.filter { newFilter.predicate(it) }.map { it.toUiModel() })
+    fun searchTasks(query: String) {
+        getTasksJob?.cancel()
+        getTasksJob = viewModelScope.launch {
+            delay(300.milliseconds)
+            if (query.isNotEmpty()) {
+                tasksRepository.getTasks().collect { tasks ->
+                    val filteredTasks = tasks.filter { task ->
+                        task.title.contains(query, ignoreCase = true)
+                    }.map { it.toUiModel() }
+                    _uiState.update {
+                        it.copy(tasks = filteredTasks)
+                    }
+                }
+            } else {
+                loadTasks()
             }
+        }
+
+    }
+
+    fun selectTaskFilter(newFilter: TaskFilter) {
+        getTasksJob?.cancel()
+        getTasksJob = viewModelScope.launch {
+            val tasks = tasksRepository.getTasks().collect { tasks ->
+                _uiState.update { state ->
+                    state.copy(
+                        selectedTaskFilter = newFilter,
+                        tasks = tasks.filter { newFilter.predicate(it) }.map { it.toUiModel() })
+                }
+            }
+
         }
     }
 
-    fun loadTasks() = viewModelScope.launch {
+    private suspend fun loadTasks() {
         tasksRepository.getTasks().collect { value ->
             _uiState.update { state ->
                 val newTasks = value

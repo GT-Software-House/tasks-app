@@ -1,9 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.compose.reload.ComposeHotRun
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -12,7 +10,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
     //kotlin(libs.plugins.kotlinSerialization.get().pluginId).version(libs.versions.kotlin).apply(false)
-    alias(libs.plugins.composeHotReload)
+    //alias(libs.plugins.composeHotReload)
+    id("co.touchlab.skie") version "0.10.0"
 }
 
 kotlin {
@@ -100,9 +99,6 @@ kotlin {
             }
         }
     }
-    sourceSets.all {
-        languageSettings.enableLanguageFeature("ExplicitBackingFields")
-    }
 }
 
 android {
@@ -136,6 +132,12 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+skie {
+    features {
+        enableSwiftUIObservingPreview = true
+    }
+}
+
 composeCompiler {
     featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
 }
@@ -155,8 +157,8 @@ compose.desktop {
         }
     }
 }
-tasks.register<ComposeHotRun>("runHot") {
-    mainClass.set("org.gabrielsantana.tasks.MainHotReloadKt")
-}
+//tasks.register<ComposeHotRun>("runHot") {
+//    mainClass.set("org.gabrielsantana.tasks.MainHotReloadKt")
+//}
 
 
