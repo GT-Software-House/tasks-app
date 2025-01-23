@@ -33,9 +33,15 @@ struct HomeView: View {
                         .labelsHidden().toggleStyle(CheckboxStyle())
 
                     }
+                    .swipeActions {
+                        Button("Delete") {
+                            viewModel.deleteTask(task: task)
+                        }.tint(Color.red)
+                    }
                     .padding(.all, 8)
 
                 }
+                .animation(.default, value: UUID())
                 .navigationTitle("Tasks")
                 .toolbar {
                     ToolbarItemGroup(placement: .bottomBar) {
@@ -69,7 +75,7 @@ struct CheckboxStyle: ToggleStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
 
         return HStack {
-            Image(systemName: configuration.isOn ? "checkmark.square" : "square")
+            Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
                 .resizable()
                 .frame(width: 24, height: 24)
                 .foregroundColor(configuration.isOn ? .blue : .gray)

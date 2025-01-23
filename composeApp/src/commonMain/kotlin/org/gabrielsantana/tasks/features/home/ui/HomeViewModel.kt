@@ -44,6 +44,10 @@ class HomeViewModel(
         clearSelectedTasks()
     }
 
+    fun deleteTask(task: TaskUiModel) {
+        tasksRepository.deleteTask(task.id.toLong())
+    }
+
     fun searchTasks(query: String) {
         getTasksJob?.cancel()
         getTasksJob = viewModelScope.launch {
