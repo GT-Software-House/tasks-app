@@ -23,10 +23,8 @@ navigationCompose = "2.8.0-alpha10"
 sqldelight = "2.0.2"
 koin = "4.0.0"
 statelyCommon = "2.0.5"
-kotlinFirework = "2.1.0-firework.29"
 foundationDesktop = "1.7.0"
 foundationAndroid = "1.7.5"
-hotReload = "1.0.0-dev.29.2"
 materialKolor = "2.0.0"
 
 [libraries]
@@ -70,8 +68,7 @@ materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "ma
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
-composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinFirework" }
-kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlinFirework" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 kotlinSerialization = { id = "plugin.serialization", version.ref = "kotlin" }
-composeHotReload = { id = "org.jetbrains.compose-hot-reload", version.ref = "hotReload"}
