@@ -50,7 +50,7 @@ struct HomeView: View {
                         }) {
                             HStack {
                                 Image(systemName: "plus.circle.fill")
-                                Text("New Reminder")
+                                Text("New Task")
                             }
                         }
                         Spacer()

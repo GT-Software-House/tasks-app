@@ -24,6 +24,8 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
     fun updateIsChecked(id: Long, isChecked: Boolean) {
         queries.updateIsChecked(isChecked = isChecked.toLong(), id = id)
     }
+
+
 }
 
 private fun Boolean.toLong(): Long {
