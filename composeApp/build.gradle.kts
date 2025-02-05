@@ -12,6 +12,7 @@ plugins {
     //kotlin(libs.plugins.kotlinSerialization.get().pluginId).version(libs.versions.kotlin).apply(false)
     //alias(libs.plugins.composeHotReload)
     id("co.touchlab.skie") version "0.10.0"
+    id("org.jetbrains.kotlinx.kover")
 }
 
 kotlin {
@@ -135,6 +136,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.junit.jupiter)
     debugImplementation(compose.uiTooling)
 }
 

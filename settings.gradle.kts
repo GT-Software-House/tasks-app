@@ -32,6 +32,7 @@ dependencyResolutionManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+    id("org.jetbrains.kotlinx.kover") version "0.9.1" apply false
 }
 
 include(":composeApp")
