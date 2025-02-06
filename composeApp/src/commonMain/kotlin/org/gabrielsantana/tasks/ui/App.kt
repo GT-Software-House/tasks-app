@@ -23,7 +23,6 @@ import org.gabrielsantana.tasks.features.home.ui.HomeScreen
 import org.gabrielsantana.tasks.features.settings.SettingsScreen
 import org.gabrielsantana.tasks.ui.theme.DarkColorScheme
 import org.gabrielsantana.tasks.ui.theme.LightColorScheme
-import org.gabrielsantana.tasks.ui.theme.TasksTheme
 import org.gabrielsantana.tasks.ui.theme.Typography
 import org.jetbrains.compose.ui.tooling.preview.Preview
 

@@ -12,7 +12,6 @@ class TasksApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
         val androidModule = module {
             factory<DatabaseDriverFactory> { AndroidDatabaseDriverFactory(this@TasksApp) }
         }

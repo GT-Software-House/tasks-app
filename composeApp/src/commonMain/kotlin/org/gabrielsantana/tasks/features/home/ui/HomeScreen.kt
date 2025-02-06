@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.gabrielsantana.tasks.home.platform
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -44,7 +45,9 @@ fun HomeScreen(
             onTaskCreated()
         }
     }
-
+    LaunchedEffect(Unit) {
+        hostState.showSnackbar(platform(), "", false, SnackbarDuration.Long)
+    }
     HomeContent(
         uiState = uiState,
         hostState = hostState,

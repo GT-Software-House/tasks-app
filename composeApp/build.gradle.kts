@@ -9,10 +9,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
-    //kotlin(libs.plugins.kotlinSerialization.get().pluginId).version(libs.versions.kotlin).apply(false)
-    //alias(libs.plugins.composeHotReload)
-    id("co.touchlab.skie") version "0.10.0"
-    id("org.jetbrains.kotlinx.kover")
+    alias(libs.plugins.skie)
+    alias(libs.plugins.kover)
 }
 
 kotlin {
@@ -54,8 +52,6 @@ kotlin {
             implementation(libs.sqldelight.android)
             //koin
             implementation(libs.koin.android)
-            implementation(libs.mockk.android)
-            implementation(libs.mockk)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -83,6 +79,7 @@ kotlin {
             implementation("com.russhwolf:multiplatform-settings-no-arg:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-serialization:1.2.0")
+            implementation(project(":home"))
         }
         commonTest.dependencies {
             implementation(libs.mockk.common)
