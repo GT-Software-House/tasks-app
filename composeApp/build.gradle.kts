@@ -162,8 +162,3 @@ compose.desktop {
         }
     }
 }
-//tasks.register<ComposeHotRun>("runHot") {
-//    mainClass.set("org.gabrielsantana.tasks.MainHotReloadKt")
-//}
-
-

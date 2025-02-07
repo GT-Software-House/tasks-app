@@ -21,34 +21,22 @@ kotlin {
             baseName = "auth"
         }
     }
-
     jvm("desktop")
     sourceSets {
-
-        val desktopMain by getting
-        val androidInstrumentedTest by getting
-
         commonMain.dependencies {
             implementation(libs.kotlin.stdlib)
         }
-
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-
-        desktopMain.dependencies {
-        }
-
         androidInstrumentedTest.dependencies {
             implementation(libs.androidx.runner)
             implementation(libs.androidx.core)
             implementation(libs.androidx.test.junit)
         }
-
     }
 
 }
-
 
 android {
     namespace = "org.gabrielsantana.tasks.auth"
