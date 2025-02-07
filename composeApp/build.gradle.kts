@@ -79,7 +79,7 @@ kotlin {
             implementation("com.russhwolf:multiplatform-settings-no-arg:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-serialization:1.2.0")
-            implementation(project(":home"))
+            implementation(project(":auth"))
         }
         commonTest.dependencies {
             implementation(libs.mockk.common)
