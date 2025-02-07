@@ -1,17 +1,15 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.kotlinMultiplatformLibrary)
+    alias(libs.plugins.androidLibrary)
 }
 
 kotlin {
-    androidLibrary {
-        namespace = "org.gabrielsantana.tasks.home"
-        compileSdk = 35
-        minSdk = 24
-        withDeviceTestBuilder {
-            sourceSetTreeName = "test"
-        }.configure {
-            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
     listOf(
@@ -28,6 +26,7 @@ kotlin {
     sourceSets {
 
         val desktopMain by getting
+        val androidInstrumentedTest by getting
 
         commonMain.dependencies {
             implementation(libs.kotlin.stdlib)
@@ -40,7 +39,7 @@ kotlin {
         desktopMain.dependencies {
         }
 
-        getByName("androidDeviceTest").dependencies {
+        androidInstrumentedTest.dependencies {
             implementation(libs.androidx.runner)
             implementation(libs.androidx.core)
             implementation(libs.androidx.test.junit)
@@ -48,4 +47,19 @@ kotlin {
 
     }
 
+}
+
+
+android {
+    namespace = "org.gabrielsantana.tasks.home"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 }
