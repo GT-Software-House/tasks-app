@@ -1,6 +1,7 @@
 package org.gabrielsantana.tasks
 
 import android.app.Application
+import org.gabrielsantana.tasks.auth.login.startFirebaseAuth
 import org.gabrielsantana.tasks.data.driver.AndroidDatabaseDriverFactory
 import org.gabrielsantana.tasks.data.driver.DatabaseDriverFactory
 import org.gabrielsantana.tasks.di.appModule
@@ -20,5 +21,6 @@ class TasksApp : Application() {
             androidContext(this@TasksApp)
             modules(androidModule + appModule)
         }
+        startFirebaseAuth(getString(R.string.default_web_client_id))
     }
 }

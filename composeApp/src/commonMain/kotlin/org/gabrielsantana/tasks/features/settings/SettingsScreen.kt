@@ -28,6 +28,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +50,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
+import kotlinx.coroutines.launch
 import org.gabrielsantana.tasks.ui.AppState
 import org.gabrielsantana.tasks.ui.ColorSchemeProvider
 import org.gabrielsantana.tasks.ui.ThemeMode
@@ -123,9 +128,21 @@ fun SettingsScreen(
                         modifier = Modifier.horizontalScroll(rememberScrollState())
                     )
                 }
-
-                Button(onClick = onDismissRequest, Modifier.align(Alignment.End)) {
-                    Text("Done")
+                val coroutineScope = rememberCoroutineScope()
+                Row(
+                    Modifier.fillMaxWidth(),
+                ) {
+                    OutlinedButton(onClick = {
+                        coroutineScope.launch {
+                            Firebase.auth.signOut()
+                        }
+                    }) {
+                        Text("Logout")
+                    }
+                    Spacer(Modifier.weight(1F))
+                    Button(onClick = onDismissRequest, ) {
+                        Text("Done")
+                    }
                 }
             }
         }

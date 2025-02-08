@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.skie)
     alias(libs.plugins.kover)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.crashlytics)
 }
 
 kotlin {
@@ -71,7 +73,6 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(libs.stately.common)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.materialKolor)
 //            implementation(libs.datastore)
@@ -80,6 +81,9 @@ kotlin {
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-serialization:1.2.0")
             implementation(project(":auth"))
+            //Firebase
+            implementation(libs.kmpauth.google)
+            implementation(libs.kmpauth.firebase)
         }
         commonTest.dependencies {
             implementation(libs.mockk.common)

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package org.gabrielsantana.tasks.ui
 
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -7,11 +5,11 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,13 +18,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.tasks.features.home.ui.HomeScreen
+import org.gabrielsantana.tasks.features.login.ui.LoginScreen
 import org.gabrielsantana.tasks.features.settings.SettingsScreen
 import org.gabrielsantana.tasks.ui.theme.DarkColorScheme
 import org.gabrielsantana.tasks.ui.theme.LightColorScheme
 import org.gabrielsantana.tasks.ui.theme.Typography
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.getKoin
 
 enum class RootScreens(val title: String) {
+    Login("Login"),
     Home("Home"),
     CreateTask("Create task"),
     Settings("Settings");
@@ -45,10 +45,9 @@ fun interface ColorSchemeProvider {
 
 
 @Composable
-@Preview
 fun App(
     navController: NavHostController = rememberNavController(),
-    appState: AppState = rememberAppState()
+    appState: AppState = rememberAppState(),
 ) {
     val darkTheme = appState.isDarkMode
     var colorSchemeProvider by remember {
@@ -59,11 +58,26 @@ fun App(
     } else ColorSchemeProvider.DEFAULT.provide(
         darkTheme
     )
+
+    val isLoggedIn by appState.isLoggedIn.collectAsStateWithLifecycle()
+    val startDestination = if (isLoggedIn) RootScreens.Home.name else RootScreens.Login.name
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
     ) {
-        val graph = navController.createGraph(startDestination = RootScreens.Home.name) {
+        val graph = navController.createGraph(startDestination = startDestination) {
+            composable(RootScreens.Login.name) {
+                LoginScreen(
+                    onNavigateToHome = {
+//                        navController.navigate(RootScreens.Home.name) {
+//                            popUpTo(RootScreens.Login.name) {
+//                                inclusive = true
+//                            }
+//                        }
+                    }
+                )
+            }
             composable(RootScreens.Home.name) { entry ->
                 val taskCreated =
                     entry.savedStateHandle.get<Boolean>("taskCreatedSuccessfully") == true

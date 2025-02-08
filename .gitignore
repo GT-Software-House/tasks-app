@@ -18,3 +18,4 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 /composeApp/*.db
 .fleet
+/composeApp/google-services.json

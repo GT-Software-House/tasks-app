@@ -18,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.gabrielsantana.tasks.auth.platform
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -40,9 +39,6 @@ fun HomeScreen(
             hostState.showSnackbar("Task created")
             onTaskCreated()
         }
-    }
-    LaunchedEffect(Unit) {
-        hostState.showSnackbar(platform(), "", false, SnackbarDuration.Long)
     }
     HomeContent(
         uiState = uiState,
@@ -228,7 +224,7 @@ fun TaskItem(
 
 @Preview
 @Composable
-private fun TaskItemPreview(modifier: Modifier = Modifier) {
+private fun TaskItemPreview() {
     MaterialTheme {
         TaskItem(
             "teste",
