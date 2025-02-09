@@ -54,8 +54,6 @@ kotlin {
             implementation(libs.sqldelight.android)
             //koin
             implementation(libs.koin.android)
-            implementation(libs.mockk.android)
-            implementation(libs.mockk)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -78,11 +76,11 @@ kotlin {
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.materialKolor)
-//            implementation(libs.datastore)
-//            implementation(libs.datastore.preferences)
+            implementation("androidx.datastore:datastore-preferences:1.1.2")
             implementation("com.russhwolf:multiplatform-settings-no-arg:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-serialization:1.2.0")
+            implementation("com.russhwolf:multiplatform-settings-datastore:1.3.0")
         }
         commonTest.dependencies {
             implementation(libs.mockk.common)

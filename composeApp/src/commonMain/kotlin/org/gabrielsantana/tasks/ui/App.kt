@@ -5,33 +5,32 @@ package org.gabrielsantana.tasks.ui
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.tasks.features.home.ui.HomeScreen
 import org.gabrielsantana.tasks.features.settings.SettingsScreen
+import org.gabrielsantana.tasks.features.settings.appearance.ui.AppearanceScreen
 import org.gabrielsantana.tasks.ui.theme.DarkColorScheme
 import org.gabrielsantana.tasks.ui.theme.LightColorScheme
-import org.gabrielsantana.tasks.ui.theme.TasksTheme
 import org.gabrielsantana.tasks.ui.theme.Typography
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 enum class RootScreens(val title: String) {
     Home("Home"),
     CreateTask("Create task"),
-    Settings("Settings");
+    Settings("Settings"),
+    Appearance("Apperance");
 }
+
+
 
 fun interface ColorSchemeProvider {
     @Composable
@@ -97,21 +96,24 @@ fun App(
                     },
                 )
             }
-            dialog(RootScreens.Settings.name) {
+            composable(RootScreens.Settings.name) {
                 SettingsScreen(
-                    themeMode = appState.themeMode,
-                    isDynamicColorsEnabled = appState.isDynamicColorsEnabled,
-                    onChangeThemeMode = { themeMode ->
-                        appState.themeMode = themeMode
+                    onNavigateToAppearance = {
+                        navController.navigate(RootScreens.Appearance.name)
                     },
-                    onDismissRequest = {
-                        navController.popBackStack()
-                    },
-                    onToggleDynamicColors = { isDynamicColors ->
-                        appState.isDynamicColorsEnabled = isDynamicColors
-                    },
-                    onColorSchemeProvider = {
-                        colorSchemeProvider = it
+                    onNavigateBack = {
+                        if (navController.currentBackStackEntry?.destination?.route == RootScreens.Settings.name) {
+                            navController.popBackStack()
+                        }
+                    }
+                )
+            }
+            composable(RootScreens.Appearance.name) {
+                AppearanceScreen(
+                    onNavigateBack = {
+                        if (navController.currentBackStackEntry?.destination?.route == RootScreens.Appearance.name) {
+                            navController.popBackStack()
+                        }
                     }
                 )
             }

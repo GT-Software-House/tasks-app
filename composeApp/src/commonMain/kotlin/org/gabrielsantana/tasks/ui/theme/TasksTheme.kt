@@ -31,14 +31,14 @@ val LightColorScheme = lightColorScheme(
     */
 )
 
-@Composable
-expect fun TasksTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    isDynamicColorEnabled: Boolean,
-    dynamicColorType: ColorType,
-    content: @Composable () -> Unit
-)
+//@Composable
+//expect fun TasksTheme(
+//    darkTheme: Boolean = isSystemInDarkTheme(),
+//    // Dynamic color is available on Android 12+
+//    isDynamicColorEnabled: Boolean,
+//    dynamicColorType: ColorType,
+//    content: @Composable () -> Unit
+//)
 
 @Composable
 fun CommonTasksTheme(
