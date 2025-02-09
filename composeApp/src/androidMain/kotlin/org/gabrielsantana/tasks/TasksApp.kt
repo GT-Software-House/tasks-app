@@ -22,7 +22,7 @@ class TasksApp : Application() {
             factory<DatabaseDriverFactory> { AndroidDatabaseDriverFactory(this@TasksApp) }
             single {
                 val context: Context = get()
-                createDataStore(producePath = { context.filesDir.resolve(dataStoreFileName).absolutePath } )
+                createDataStore(producePath = { context.filesDir.resolve(dataStoreFileName).absolutePath })
             }
         }
 

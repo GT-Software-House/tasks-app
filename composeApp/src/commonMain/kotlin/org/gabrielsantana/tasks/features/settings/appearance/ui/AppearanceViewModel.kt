@@ -1,5 +1,7 @@
 package org.gabrielsantana.tasks.features.settings.appearance.ui
 
+import androidx.annotation.ColorInt
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
@@ -19,10 +21,17 @@ class AppearanceViewModel(
     }
 
     private fun loadPreferences() {
-        combine(preferencesRepository.getDynamicColorPreference(), preferencesRepository.getThemeMode()) { dynamicColor, themeMode ->
-           AppearanceUiState(
+        combine(
+            preferencesRepository.getDynamicColorPreference(),
+            preferencesRepository.getThemeMode(),
+            preferencesRepository.getIsAmoled(),
+            preferencesRepository.getSeedColor()
+        ) { dynamicColor, themeMode, isAmoled, seedColor ->
+            AppearanceUiState(
                 isDynamicColorsEnabled = dynamicColor,
-                themeMode = themeMode
+                themeMode = themeMode,
+                selectedSeedColor = seedColor,
+                isAmoled = isAmoled
             )
         }.onEach {
             _uiState.value = it
@@ -38,6 +47,18 @@ class AppearanceViewModel(
     fun updateDynamicColorPreference(useDynamicColor: Boolean) {
         viewModelScope.launch {
             preferencesRepository.updateDynamicColorPreference(useDynamicColor)
+        }
+    }
+
+    fun updateSelectedColorPreference(@ColorInt color: Int) {
+        viewModelScope.launch {
+            preferencesRepository.updateSeedColor(color)
+        }
+    }
+
+    fun updateAmoledPreference(isAmoled: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.updateIsAmoled(isAmoled)
         }
     }
 }

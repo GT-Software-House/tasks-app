@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.materialkolor.rememberDynamicColorScheme
 import org.gabrielsantana.tasks.features.settings.ColorType
 
@@ -41,18 +42,19 @@ val LightColorScheme = lightColorScheme(
 //)
 
 @Composable
-fun CommonTasksTheme(
+fun TasksTheme(
     darkTheme: Boolean,
-    // Dynamic color is available on Android 12+
     isDynamicColorEnabled: Boolean,
-    dynamicColorType: ColorType,
+    dynamicColorSeed: Color? = null,
+    isAmoled: Boolean = false,
     content: @Composable () -> Unit
 ) {
 
     val colorScheme = when {
-        isDynamicColorEnabled && dynamicColorType is ColorType.CustomColor -> {
-            rememberDynamicColorScheme(seedColor = dynamicColorType.color, isDark = darkTheme, isAmoled = false)
+        isDynamicColorEnabled && dynamicColorSeed != null -> {
+            rememberDynamicColorScheme(seedColor = dynamicColorSeed, isDark = darkTheme, isAmoled = isAmoled)
         }
+
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

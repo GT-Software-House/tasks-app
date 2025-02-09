@@ -7,6 +7,7 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toBlockingSettings
 import com.russhwolf.settings.coroutines.toSuspendSettings
+import com.russhwolf.settings.get
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -34,11 +35,31 @@ class PreferencesRepository(
     fun getDynamicColorPreference(): Flow<Boolean> {
         return flowSettings.getBooleanFlow(PreferencesKeys.USE_DYNAMIC_COLOR, false)
     }
+
+    @OptIn(ExperimentalSettingsApi::class)
+    suspend fun updateIsAmoled(isAmoled: Boolean) {
+        flowSettings.putBoolean(PreferencesKeys.IS_AMOLED, isAmoled)
+    }
+    @OptIn(ExperimentalSettingsApi::class)
+    fun getIsAmoled(): Flow<Boolean> {
+        return flowSettings.getBooleanFlow(PreferencesKeys.IS_AMOLED, false)
+    }
+
+    @OptIn(ExperimentalSettingsApi::class)
+    suspend fun updateSeedColor(color: Int) {
+        flowSettings.putInt(PreferencesKeys.SEED_COLOR, color)
+    }
+    @OptIn(ExperimentalSettingsApi::class)
+    fun getSeedColor(): Flow<Int?> {
+        return flowSettings.getIntOrNullFlow(PreferencesKeys.SEED_COLOR)
+    }
 }
 
 private object PreferencesKeys {
     const val THEME_MODE = "theme_mode"
     const val USE_DYNAMIC_COLOR = "use_dynamic_color"
+    const val IS_AMOLED = "is_amoled"
+    const val SEED_COLOR = "seed_color"
 }
 
 private fun ThemeMode.mapInt(): Int = when (this) {

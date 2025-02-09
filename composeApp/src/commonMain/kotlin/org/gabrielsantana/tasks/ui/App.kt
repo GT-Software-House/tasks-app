@@ -7,7 +7,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,8 +19,9 @@ import org.gabrielsantana.tasks.features.settings.SettingsScreen
 import org.gabrielsantana.tasks.features.settings.appearance.ui.AppearanceScreen
 import org.gabrielsantana.tasks.ui.theme.DarkColorScheme
 import org.gabrielsantana.tasks.ui.theme.LightColorScheme
-import org.gabrielsantana.tasks.ui.theme.Typography
+import org.gabrielsantana.tasks.ui.theme.TasksTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.getKoin
 
 enum class RootScreens(val title: String) {
     Home("Home"),
@@ -29,7 +29,6 @@ enum class RootScreens(val title: String) {
     Settings("Settings"),
     Appearance("Apperance");
 }
-
 
 
 fun interface ColorSchemeProvider {
@@ -48,20 +47,18 @@ fun interface ColorSchemeProvider {
 @Preview
 fun App(
     navController: NavHostController = rememberNavController(),
-    appState: AppState = rememberAppState()
+    appState: AppState = rememberAppState(getKoin().get())
 ) {
     val darkTheme = appState.isDarkMode
-    var colorSchemeProvider by remember {
-        mutableStateOf<ColorSchemeProvider?>(null)
-    }
-    val colorScheme = if (appState.isDynamicColorsEnabled) {
-        colorSchemeProvider?.provide(darkTheme) ?: ColorSchemeProvider.DEFAULT.provide(darkTheme)
-    } else ColorSchemeProvider.DEFAULT.provide(
-        darkTheme
-    )
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
+    val isAmoled by appState.isAmoled
+    val colorSeed by appState.seedColor
+    val isDynamicColorEnabled by appState.isDynamicColorEnabled
+
+    TasksTheme(
+        dynamicColorSeed = colorSeed,
+        darkTheme = darkTheme,
+        isDynamicColorEnabled = isDynamicColorEnabled,
+        isAmoled = isAmoled,
     ) {
         val graph = navController.createGraph(startDestination = RootScreens.Home.name) {
             composable(RootScreens.Home.name) { entry ->
