@@ -22,9 +22,9 @@ class AppearanceViewModel(
 
     private fun loadPreferences() {
         combine(
-            preferencesRepository.getDynamicColorPreference(),
+            preferencesRepository.getIsDynamicColorsEnabled(),
             preferencesRepository.getThemeMode(),
-            preferencesRepository.getIsAmoled(),
+            preferencesRepository.getIsAmoledColorsEnabled(),
             preferencesRepository.getSeedColor()
         ) { dynamicColor, themeMode, isAmoled, seedColor ->
             AppearanceUiState(
@@ -46,7 +46,7 @@ class AppearanceViewModel(
 
     fun updateDynamicColorPreference(useDynamicColor: Boolean) {
         viewModelScope.launch {
-            preferencesRepository.updateDynamicColorPreference(useDynamicColor)
+            preferencesRepository.updateIsDynamicColors(useDynamicColor)
         }
     }
 
@@ -58,7 +58,7 @@ class AppearanceViewModel(
 
     fun updateAmoledPreference(isAmoled: Boolean) {
         viewModelScope.launch {
-            preferencesRepository.updateIsAmoled(isAmoled)
+            preferencesRepository.updateIsAmoledColors(isAmoled)
         }
     }
 }

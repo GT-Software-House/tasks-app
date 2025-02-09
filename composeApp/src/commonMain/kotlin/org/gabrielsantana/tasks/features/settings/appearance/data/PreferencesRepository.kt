@@ -3,13 +3,8 @@
 package org.gabrielsantana.tasks.features.settings.appearance.data
 
 import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.FlowSettings
-import com.russhwolf.settings.coroutines.toBlockingSettings
-import com.russhwolf.settings.coroutines.toSuspendSettings
-import com.russhwolf.settings.get
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import org.gabrielsantana.tasks.ui.ThemeMode
 
@@ -28,27 +23,30 @@ class PreferencesRepository(
     }
 
     @OptIn(ExperimentalSettingsApi::class)
-    suspend fun updateDynamicColorPreference(useDynamicColor: Boolean) {
-        flowSettings.putBoolean(PreferencesKeys.USE_DYNAMIC_COLOR, useDynamicColor)
-    }
-    @OptIn(ExperimentalSettingsApi::class)
-    fun getDynamicColorPreference(): Flow<Boolean> {
-        return flowSettings.getBooleanFlow(PreferencesKeys.USE_DYNAMIC_COLOR, false)
+    suspend fun updateIsDynamicColors(isEnabled: Boolean) {
+        flowSettings.putBoolean(PreferencesKeys.IS_DYNAMIC_COLORS_ENABLED, isEnabled)
     }
 
     @OptIn(ExperimentalSettingsApi::class)
-    suspend fun updateIsAmoled(isAmoled: Boolean) {
-        flowSettings.putBoolean(PreferencesKeys.IS_AMOLED, isAmoled)
+    fun getIsDynamicColorsEnabled(): Flow<Boolean> {
+        return flowSettings.getBooleanFlow(PreferencesKeys.IS_DYNAMIC_COLORS_ENABLED, false)
     }
+
     @OptIn(ExperimentalSettingsApi::class)
-    fun getIsAmoled(): Flow<Boolean> {
-        return flowSettings.getBooleanFlow(PreferencesKeys.IS_AMOLED, false)
+    suspend fun updateIsAmoledColors(isEnabled: Boolean) {
+        flowSettings.putBoolean(PreferencesKeys.IS_AMOLED_ENABLED, isEnabled)
+    }
+
+    @OptIn(ExperimentalSettingsApi::class)
+    fun getIsAmoledColorsEnabled(): Flow<Boolean> {
+        return flowSettings.getBooleanFlow(PreferencesKeys.IS_AMOLED_ENABLED, false)
     }
 
     @OptIn(ExperimentalSettingsApi::class)
     suspend fun updateSeedColor(color: Int) {
         flowSettings.putInt(PreferencesKeys.SEED_COLOR, color)
     }
+
     @OptIn(ExperimentalSettingsApi::class)
     fun getSeedColor(): Flow<Int?> {
         return flowSettings.getIntOrNullFlow(PreferencesKeys.SEED_COLOR)
@@ -57,8 +55,8 @@ class PreferencesRepository(
 
 private object PreferencesKeys {
     const val THEME_MODE = "theme_mode"
-    const val USE_DYNAMIC_COLOR = "use_dynamic_color"
-    const val IS_AMOLED = "is_amoled"
+    const val IS_DYNAMIC_COLORS_ENABLED = "use_dynamic_color"
+    const val IS_AMOLED_ENABLED = "is_amoled"
     const val SEED_COLOR = "seed_color"
 }
 

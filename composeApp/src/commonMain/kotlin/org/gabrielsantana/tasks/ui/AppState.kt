@@ -19,11 +19,11 @@ class AppState(
 
     val isDynamicColorEnabled: State<Boolean>
         @Composable
-        get() = preferencesRepository.getDynamicColorPreference().collectAsStateWithLifecycle(false)
+        get() = preferencesRepository.getIsDynamicColorsEnabled().collectAsStateWithLifecycle(false)
 
     val isAmoled: State<Boolean>
         @Composable
-        get() = preferencesRepository.getIsAmoled().collectAsStateWithLifecycle(false)
+        get() = preferencesRepository.getIsAmoledColorsEnabled().collectAsStateWithLifecycle(false)
 
     val seedColor: State<Color?>
         @Composable
