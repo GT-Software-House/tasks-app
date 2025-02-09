@@ -4,14 +4,19 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import org.gabrielsantana.tasks.features.settings.ColorType
 import org.gabrielsantana.tasks.features.settings.appearance.data.PreferencesRepository
 
 @Stable
 class AppState(
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    coroutineScope: CoroutineScope,
 ) {
     val themeMode: State<ThemeMode>
         @Composable
@@ -33,6 +38,11 @@ class AppState(
             .collectAsStateWithLifecycle(null)
 
 
+    val isLoggedIn = callbackFlow {
+        Firebase.auth.authStateChanged.collect { user ->
+            trySend(user != null)
+        }
+    }.stateIn(coroutineScope, SharingStarted.WhileSubscribed(), Firebase.auth.currentUser != null)
 }
 
 val AppState.isDarkMode: Boolean
@@ -49,6 +59,9 @@ sealed class ThemeMode {
 
 
 @Composable
-fun rememberAppState(preferencesRepository: PreferencesRepository): AppState = remember {
-    AppState(preferencesRepository)
+fun rememberAppState(
+    preferencesRepository: PreferencesRepository,
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
+): AppState = remember {
+    AppState(preferencesRepository, coroutineScope)
 }

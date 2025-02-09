@@ -2,8 +2,6 @@ package org.gabrielsantana.tasks
 
 import android.app.Application
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import org.gabrielsantana.tasks.data.createDataStore
 import org.gabrielsantana.tasks.data.dataStoreFileName
 import org.gabrielsantana.tasks.data.driver.AndroidDatabaseDriverFactory
@@ -17,7 +15,6 @@ class TasksApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
         val androidModule = module {
             factory<DatabaseDriverFactory> { AndroidDatabaseDriverFactory(this@TasksApp) }
             single {
@@ -30,5 +27,6 @@ class TasksApp : Application() {
             androidContext(this@TasksApp)
             modules(androidModule + appModule)
         }
+        startFirebaseAuth(getString(R.string.default_web_client_id))
     }
 }

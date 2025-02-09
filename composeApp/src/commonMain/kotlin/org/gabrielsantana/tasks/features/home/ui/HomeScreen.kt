@@ -3,12 +3,10 @@ package org.gabrielsantana.tasks.features.home.ui
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
@@ -19,8 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -44,7 +40,6 @@ fun HomeScreen(
             onTaskCreated()
         }
     }
-
     HomeContent(
         uiState = uiState,
         hostState = hostState,
@@ -229,7 +224,7 @@ fun TaskItem(
 
 @Preview
 @Composable
-private fun TaskItemPreview(modifier: Modifier = Modifier) {
+private fun TaskItemPreview() {
     MaterialTheme {
         TaskItem(
             "teste",

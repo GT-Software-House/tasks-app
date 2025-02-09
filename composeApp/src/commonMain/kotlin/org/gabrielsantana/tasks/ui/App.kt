@@ -1,10 +1,15 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package org.gabrielsantana.tasks.ui
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
@@ -15,15 +20,16 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.tasks.features.home.ui.HomeScreen
+import org.gabrielsantana.tasks.features.login.ui.LoginScreen
 import org.gabrielsantana.tasks.features.settings.SettingsScreen
 import org.gabrielsantana.tasks.features.settings.appearance.ui.AppearanceScreen
 import org.gabrielsantana.tasks.ui.theme.DarkColorScheme
 import org.gabrielsantana.tasks.ui.theme.LightColorScheme
-import org.gabrielsantana.tasks.ui.theme.TasksTheme
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.gabrielsantana.tasks.ui.theme.Typography
 import org.koin.compose.getKoin
 
 enum class RootScreens(val title: String) {
+    Login("Login"),
     Home("Home"),
     CreateTask("Create task"),
     Settings("Settings"),
@@ -44,15 +50,18 @@ fun interface ColorSchemeProvider {
 
 
 @Composable
-@Preview
 fun App(
     navController: NavHostController = rememberNavController(),
-    appState: AppState = rememberAppState(getKoin().get())
+    appState: AppState = rememberAppState(getKoin().get()),
 ) {
     val darkTheme = appState.isDarkMode
     val isAmoled by appState.isAmoled
     val colorSeed by appState.seedColor
     val isDynamicColorEnabled by appState.isDynamicColorEnabled
+
+    val isLoggedIn by appState.isLoggedIn.collectAsStateWithLifecycle()
+    val startDestination = if (isLoggedIn) RootScreens.Home.name else RootScreens.Login.name
+
 
     TasksTheme(
         dynamicColorSeed = colorSeed,
@@ -60,7 +69,18 @@ fun App(
         isDynamicColorEnabled = isDynamicColorEnabled,
         isAmoled = isAmoled,
     ) {
-        val graph = navController.createGraph(startDestination = RootScreens.Home.name) {
+        val graph = navController.createGraph(startDestination = startDestination) {
+            composable(RootScreens.Login.name) {
+                LoginScreen(
+                    onNavigateToHome = {
+//                        navController.navigate(RootScreens.Home.name) {
+//                            popUpTo(RootScreens.Login.name) {
+//                                inclusive = true
+//                            }
+//                        }
+                    }
+                )
+            }
             composable(RootScreens.Home.name) { entry ->
                 val taskCreated =
                     entry.savedStateHandle.get<Boolean>("taskCreatedSuccessfully") == true

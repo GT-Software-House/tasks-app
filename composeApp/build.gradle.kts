@@ -9,10 +9,10 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.sqldelight)
-    //kotlin(libs.plugins.kotlinSerialization.get().pluginId).version(libs.versions.kotlin).apply(false)
-    //alias(libs.plugins.composeHotReload)
-    id("co.touchlab.skie") version "0.10.0"
-    id("org.jetbrains.kotlinx.kover")
+    alias(libs.plugins.skie)
+    alias(libs.plugins.kover)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.crashlytics)
 }
 
 kotlin {
@@ -73,7 +73,6 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(libs.stately.common)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.materialKolor)
             implementation("androidx.datastore:datastore-preferences:1.1.2")
@@ -81,6 +80,10 @@ kotlin {
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-serialization:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-datastore:1.3.0")
+            implementation(project(":auth"))
+            //Firebase
+            implementation(libs.kmpauth.google)
+            implementation(libs.kmpauth.firebase)
         }
         commonTest.dependencies {
             implementation(libs.mockk.common)
@@ -163,8 +166,3 @@ compose.desktop {
         }
     }
 }
-//tasks.register<ComposeHotRun>("runHot") {
-//    mainClass.set("org.gabrielsantana.tasks.MainHotReloadKt")
-//}
-
-
