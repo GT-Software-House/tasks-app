@@ -30,28 +30,15 @@ enum class RootScreens(val title: String) {
     Appearance("Apperance");
 }
 
-
-fun interface ColorSchemeProvider {
-    @Composable
-    fun provide(isDarkTheme: Boolean): ColorScheme
-
-    companion object {
-        val DEFAULT = ColorSchemeProvider { isDarkTheme ->
-            if (isDarkTheme) DarkColorScheme else LightColorScheme
-        }
-    }
-}
-
-
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),
     appState: AppState = rememberAppState(getKoin().get()),
 ) {
     val darkTheme = appState.isDarkMode
-    val isAmoled by appState.isAmoled
-    val colorSeed by appState.seedColor
-    val isDynamicColorEnabled by appState.isDynamicColorEnabled
+    val isAmoled by appState.isAmoled.collectAsStateWithLifecycle()
+    val colorSeed by appState.seedColor.collectAsStateWithLifecycle()
+    val isDynamicColorEnabled by appState.isDynamicColorEnabled.collectAsStateWithLifecycle()
 
     val isLoggedIn by appState.isLoggedIn.collectAsStateWithLifecycle()
     val startDestination = if (isLoggedIn) RootScreens.Home.name else RootScreens.Login.name

@@ -15,13 +15,12 @@ import org.gabrielsantana.tasks.ui.rememberAppState
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
-    private val preferencesRepository by inject<PreferencesRepository>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val appState = rememberAppState(preferencesRepository)
+            val appState = rememberAppState()
 
             val darkTheme = appState.isDarkMode
             LaunchedEffect(darkTheme) {

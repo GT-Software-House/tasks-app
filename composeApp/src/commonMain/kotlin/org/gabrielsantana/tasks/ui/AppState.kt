@@ -8,34 +8,29 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import org.gabrielsantana.tasks.features.settings.appearance.data.PreferencesRepository
+import org.koin.compose.koinInject
 
 @Stable
 class AppState(
     private val preferencesRepository: PreferencesRepository,
     coroutineScope: CoroutineScope,
 ) {
-    val themeMode: State<ThemeMode>
-        @Composable
-        get() = preferencesRepository.getThemeMode().collectAsStateWithLifecycle(ThemeMode.System)
+    val themeMode: StateFlow<ThemeMode> =
+        preferencesRepository.getThemeMode().stateIn(coroutineScope, SharingStarted.WhileSubscribed(), ThemeMode.System)
 
-    val isDynamicColorEnabled: State<Boolean>
-        @Composable
-        get() = preferencesRepository.getIsDynamicColorsEnabled().collectAsStateWithLifecycle(false)
+    val isDynamicColorEnabled: StateFlow<Boolean> = preferencesRepository.getIsDynamicColorsEnabled()
+        .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), false)
 
-    val isAmoled: State<Boolean>
-        @Composable
-        get() = preferencesRepository.getIsAmoledColorsEnabled().collectAsStateWithLifecycle(false)
+    val isAmoled: StateFlow<Boolean> = preferencesRepository.getIsAmoledColorsEnabled()
+        .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), false)
 
-    val seedColor: State<Color?>
-        @Composable
-        get() = preferencesRepository
-            .getSeedColor()
-            .map { it?.let { Color(it) } }
-            .collectAsStateWithLifecycle(null)
+    val seedColor: StateFlow<Color?> = preferencesRepository.getSeedColor().map { it?.let { Color(it) } }
+        .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), null)
 
 
     val isLoggedIn = callbackFlow {
@@ -48,7 +43,7 @@ class AppState(
 val AppState.isDarkMode: Boolean
     @Composable
     get() {
-        return if (themeMode.value is ThemeMode.System) isSystemInDarkTheme() else themeMode.value is ThemeMode.Dark
+        return if (themeMode.collectAsStateWithLifecycle().value is ThemeMode.System) isSystemInDarkTheme() else themeMode.value is ThemeMode.Dark
     }
 
 sealed class ThemeMode {
@@ -60,7 +55,7 @@ sealed class ThemeMode {
 
 @Composable
 fun rememberAppState(
-    preferencesRepository: PreferencesRepository,
+    preferencesRepository: PreferencesRepository = koinInject(),
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ): AppState = remember {
     AppState(preferencesRepository, coroutineScope)

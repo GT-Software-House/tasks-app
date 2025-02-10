@@ -10,7 +10,7 @@ import org.gabrielsantana.tasks.features.settings.appearance.di.prefencresModule
 import org.koin.dsl.module
 
 val appModule = module {
-    single { TasksDatabase(get<DatabaseDriverFactory>().createDriver())}
+    single { TasksDatabase(get<DatabaseDriverFactory>().createDriver()) }
     single { TasksLocalDataSource(get()) }
     includes(homeModule, createTaskModule, prefencresModule)
     single { TasksRepository(get()) }
