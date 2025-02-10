@@ -2,6 +2,7 @@ package org.gabrielsantana.tasks
 
 import android.app.Application
 import android.content.Context
+import org.gabrielsantana.tasks.auth.login.startFirebaseAuth
 import org.gabrielsantana.tasks.data.createDataStore
 import org.gabrielsantana.tasks.data.dataStoreFileName
 import org.gabrielsantana.tasks.data.driver.AndroidDatabaseDriverFactory

@@ -5,10 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.materialkolor.rememberDynamicColorScheme
-import org.gabrielsantana.tasks.features.settings.ColorType
 
 val DarkColorScheme = darkColorScheme(
     primary = Purple80,
