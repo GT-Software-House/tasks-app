@@ -3,7 +3,6 @@ package org.gabrielsantana.tasks.ui
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,8 +16,6 @@ import org.gabrielsantana.tasks.features.home.ui.HomeScreen
 import org.gabrielsantana.tasks.features.login.ui.LoginScreen
 import org.gabrielsantana.tasks.features.settings.SettingsScreen
 import org.gabrielsantana.tasks.features.settings.appearance.ui.AppearanceScreen
-import org.gabrielsantana.tasks.ui.theme.DarkColorScheme
-import org.gabrielsantana.tasks.ui.theme.LightColorScheme
 import org.gabrielsantana.tasks.ui.theme.TasksTheme
 import org.koin.compose.getKoin
 
