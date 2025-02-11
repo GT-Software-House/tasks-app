@@ -75,13 +75,13 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.materialKolor)
-            implementation("androidx.datastore:datastore-preferences:1.1.2")
-            implementation("com.russhwolf:multiplatform-settings-no-arg:1.2.0")
-            implementation("com.russhwolf:multiplatform-settings-coroutines:1.2.0")
-            implementation("com.russhwolf:multiplatform-settings-serialization:1.2.0")
-            implementation("com.russhwolf:multiplatform-settings-datastore:1.3.0")
-            implementation(project(":auth"))
-            //Firebase
+            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.multiplatform.settings.no.arg)
+            implementation(libs.multiplatform.settings.coroutines)
+            implementation(libs.multiplatform.settings.serialization)
+            implementation(libs.multiplatform.settings.datastore)
+
+            //Firebase KMP AUTH
             implementation(libs.kmpauth.google)
             implementation(libs.kmpauth.firebase)
         }
