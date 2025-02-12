@@ -5,6 +5,7 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.googleNativeLogin
 import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
 import org.gabrielsantana.tasks.TasksDatabase
 import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.data.driver.DatabaseDriverFactory
@@ -25,6 +26,7 @@ val appModule = module {
             install(ComposeAuth) {
                 googleNativeLogin(SERVER_CLIENT_ID)
             }
+            install(Postgrest)
         }
     }
 }
