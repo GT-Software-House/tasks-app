@@ -49,15 +49,7 @@ fun App(
     ) {
         val graph = navController.createGraph(startDestination = startDestination) {
             composable(RootScreens.Login.name) {
-                LoginScreen(
-                    onNavigateToHome = {
-//                        navController.navigate(RootScreens.Home.name) {
-//                            popUpTo(RootScreens.Login.name) {
-//                                inclusive = true
-//                            }
-//                        }
-                    }
-                )
+                LoginScreen()
             }
             composable(RootScreens.Home.name) { entry ->
                 val taskCreated =

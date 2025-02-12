@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.google.services)
     alias(libs.plugins.crashlytics)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -54,6 +55,7 @@ kotlin {
             implementation(libs.sqldelight.android)
             //koin
             implementation(libs.koin.android)
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -80,10 +82,16 @@ kotlin {
             implementation(libs.multiplatform.settings.coroutines)
             implementation(libs.multiplatform.settings.serialization)
             implementation(libs.multiplatform.settings.datastore)
+            implementation(libs.ktor.client.core)
 
             //Firebase KMP AUTH
-            implementation(libs.kmpauth.google)
-            implementation(libs.kmpauth.firebase)
+//            implementation(libs.kmpauth.google)
+//            implementation(libs.kmpauth.firebase)
+
+            //Supabase
+            implementation(project.dependencies.platform(libs.supabase.bom))
+            implementation(libs.supabase.auth.kt)
+            implementation(libs.supabase.compose.auth)
         }
         commonTest.dependencies {
             implementation(libs.mockk.common)
@@ -98,6 +106,7 @@ kotlin {
             implementation(libs.sqldelight.native)
             implementation(libs.stately.isolate)
             implementation(libs.stately.iso.collections)
+            implementation(libs.ktor.client.darwin)
         }
     }
     sqldelight {

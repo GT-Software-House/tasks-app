@@ -2,66 +2,78 @@
 
 package org.gabrielsantana.tasks.features.login.ui
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mmk.kmpauth.google.GoogleButtonUiContainer
-import com.mmk.kmpauth.google.GoogleUser
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
+import io.github.jan.supabase.compose.auth.composable.NativeSignInStatus
+import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
+import io.github.jan.supabase.compose.auth.composeAuth
+import io.ktor.util.*
+import kotlinx.coroutines.launch
 import org.gabrielsantana.tasks.features.login.ui.icons.filled.Google
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
-private const val TAG = "LoginScreen.kt"
+import org.koin.compose.koinInject
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel(),
-    onNavigateToHome: () -> Unit,
+    supabaseClient: SupabaseClient = koinInject()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    LaunchedEffect(uiState.isSignedIn) {
-        if (uiState.isSignedIn) {
-            onNavigateToHome()
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val authState = supabaseClient.composeAuth.rememberSignInWithGoogle(
+        onResult = {
+            when (it) {
+                NativeSignInResult.ClosedByUser -> {}
+                is NativeSignInResult.Error -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "An error occurred. Try again.",
+                            withDismissAction = true
+                        )
+                    }
+                }
+
+                is NativeSignInResult.NetworkError -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "An error occurred with the network. Try Again.",
+                            withDismissAction = true
+                        )
+                    }
+                }
+
+                NativeSignInResult.Success -> {}
+            }
+        }
+    )
+    if (authState.status is NativeSignInStatus.Started) {
+        Dialog(onDismissRequest = {}) {
+            CircularProgressIndicator()
         }
     }
     LoginContent(
-        uiState = uiState,
-        onSignResult = viewModel::signInWithGoogleUser
+        onSignInClick = {
+            authState.startFlow(generateNonce())
+        },
+        snackbarHostState = snackbarHostState
     )
 }
 
-
 @Composable
 fun LoginContent(
-    uiState: LoginUiState,
-    onSignResult: (GoogleUser?) -> Unit,
+    onSignInClick: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
@@ -78,26 +90,12 @@ fun LoginContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            GoogleButtonUiContainer(onGoogleSignInResult = onSignResult) {
-                Button(
-                    onClick = this::onClick
-                ) {
-                    Icon(Icons.Default.Google, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Enter with Google")
-                }
-            }
-            if (uiState.isError) {
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    text = "Something went wrong",
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-            if (uiState.isLoading) {
-                Dialog(onDismissRequest = {}) {
-                    CircularProgressIndicator()
-                }
+            Button(
+                onClick = onSignInClick
+            ) {
+                Icon(Icons.Default.Google, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Enter with Google")
             }
         }
     }
@@ -105,12 +103,11 @@ fun LoginContent(
 
 @Preview
 @Composable
-fun LoginContentPreview(modifier: Modifier = Modifier) {
+fun LoginContentPreview() {
     MaterialTheme {
         LoginContent(
-            onSignResult = {},
-            uiState = LoginUiState(isSignedIn = true),
-            modifier = modifier
+            onSignInClick = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

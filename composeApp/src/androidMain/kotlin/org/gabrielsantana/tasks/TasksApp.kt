@@ -2,8 +2,6 @@ package org.gabrielsantana.tasks
 
 import android.app.Application
 import android.content.Context
-import com.mmk.kmpauth.google.GoogleAuthCredentials
-import com.mmk.kmpauth.google.GoogleAuthProvider
 import org.gabrielsantana.tasks.data.createDataStore
 import org.gabrielsantana.tasks.data.dataStoreFileName
 import org.gabrielsantana.tasks.data.driver.AndroidDatabaseDriverFactory
@@ -29,10 +27,6 @@ class TasksApp : Application() {
             androidContext(this@TasksApp)
             modules(androidModule + appModule)
         }
-        startFirebaseAuth()
     }
 
-    private fun startFirebaseAuth() {
-        GoogleAuthProvider.create(GoogleAuthCredentials(getString(R.string.default_web_client_id)))
-    }
 }
