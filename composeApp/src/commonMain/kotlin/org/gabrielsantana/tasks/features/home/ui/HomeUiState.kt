@@ -1,5 +1,7 @@
 package org.gabrielsantana.tasks.features.home.ui
 
+import org.gabrielsantana.tasks.features.settings.TaskFilter
+
 data class HomeUiState(
     val tasks: List<TaskUiModel> = emptyList(),
     val selectedTasksIndex: Set<Int> = emptySet(),

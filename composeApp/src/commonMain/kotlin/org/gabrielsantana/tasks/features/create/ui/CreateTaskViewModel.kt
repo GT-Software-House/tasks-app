@@ -1,10 +1,11 @@
 package org.gabrielsantana.tasks.features.create.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.*
+import kotlinx.coroutines.launch
 import org.gabrielsantana.tasks.data.TasksRepository
 
 class CreateTaskViewModel(
@@ -23,17 +24,17 @@ class CreateTaskViewModel(
     }
 
     fun createTask() {
-        if (uiState.value.title.isEmpty()) {
-            _uiState.update { it.copy(isTitleInvalid = true) }
-        }
-        if (uiState.value.description.isEmpty()) {
-            _uiState.update { it.copy(isDescriptionInvalid = true) }
-        }
-        if (uiState.value.title.isNotEmpty() && uiState.value.description.isNotEmpty()) {
-            val instant = Clock.System.now().toLocalDateTime(TimeZone.UTC)
-
-            tasksRepository.createTask(uiState.value.title, uiState.value.description)
-            _uiState.update { it.copy(taskCreatedSuccessfully = true) }
+        viewModelScope.launch {
+            if (uiState.value.title.isEmpty()) {
+                _uiState.update { it.copy(isTitleInvalid = true) }
+            }
+            if (uiState.value.description.isEmpty()) {
+                _uiState.update { it.copy(isDescriptionInvalid = true) }
+            }
+            if (uiState.value.title.isNotEmpty() && uiState.value.description.isNotEmpty()) {
+                tasksRepository.createTask(uiState.value.title, uiState.value.description)
+                _uiState.update { it.copy(taskCreatedSuccessfully = true) }
+            }
         }
     }
 

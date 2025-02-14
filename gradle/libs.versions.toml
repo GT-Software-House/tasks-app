@@ -48,10 +48,13 @@ gradlePlugins-google-services = "4.4.1"
 #Gitlive
 gitliveFirebase = "2.1.0"
 ktor = "3.0.3"
+connectivity = "1.2.0"
 
 [libraries]
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
+connectivity-core = { module = "dev.jordond.connectivity:connectivity-core", version.ref = "connectivity" }
+connectivity-device = { module = "dev.jordond.connectivity:connectivity-device", version.ref = "connectivity" }
 supabase-auth-kt = { module = "io.github.jan-tennert.supabase:auth-kt" }
 supabase-compose-auth = { module = "io.github.jan-tennert.supabase:compose-auth" }
 supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt" }

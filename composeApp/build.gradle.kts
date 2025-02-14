@@ -83,6 +83,9 @@ kotlin {
             implementation(libs.multiplatform.settings.serialization)
             implementation(libs.multiplatform.settings.datastore)
             implementation(libs.ktor.client.core)
+            implementation(libs.connectivity.core)
+            implementation(libs.connectivity.device)
+
 
             //Firebase KMP AUTH
 //            implementation(libs.kmpauth.google)

@@ -1,12 +1,13 @@
-package org.gabrielsantana.tasks.features.home.ui
+package org.gabrielsantana.tasks.features.settings
 
-import org.gabrielsantana.tasks.Task
+import org.gabrielsantana.tasks.data.model.Task
+
 
 enum class TaskFilter(val label: String, val predicate: Predicate<Task>) {
     //Maybe it's unnecessary
     ALL("All", { true }),
-    DONE("Done", { it.isChecked > 0L }),
-    DOING("Doing", { it.isChecked == 0L })
+    DONE("Done", { it.isCompleted }),
+    DOING("Doing", { it.isCompleted.not() })
 }
 
 fun interface Predicate<T> {

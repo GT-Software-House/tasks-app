@@ -1,15 +1,16 @@
 package org.gabrielsantana.tasks.features.home.ui
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.cash.sqldelight.coroutines.mapToList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.gabrielsantana.tasks.Task
 import org.gabrielsantana.tasks.data.TasksRepository
+import org.gabrielsantana.tasks.data.model.Task
+import org.gabrielsantana.tasks.features.settings.TaskFilter
 import kotlin.time.Duration.Companion.milliseconds
 
 class HomeViewModel(
@@ -106,5 +107,5 @@ class HomeViewModel(
 
 
 fun Task.toUiModel(): TaskUiModel {
-    return TaskUiModel(id.toInt(), title, description, isChecked > 0)
+    return TaskUiModel(id.toInt(), title, description, isCompleted)
 }

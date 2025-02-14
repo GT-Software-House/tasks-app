@@ -1,6 +1,7 @@
 package org.gabrielsantana.tasks.di
 
 
+import dev.jordond.connectivity.Connectivity
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.googleNativeLogin
@@ -9,7 +10,8 @@ import io.github.jan.supabase.postgrest.Postgrest
 import org.gabrielsantana.tasks.TasksDatabase
 import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.data.driver.DatabaseDriverFactory
-import org.gabrielsantana.tasks.data.source.TasksLocalDataSource
+import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
+import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
 import org.gabrielsantana.tasks.features.create.di.createTaskModule
 import org.gabrielsantana.tasks.features.home.di.homeModule
 import org.gabrielsantana.tasks.features.settings.appearance.di.prefencresModule
@@ -18,8 +20,9 @@ import org.koin.dsl.module
 val appModule = module {
     single { TasksDatabase(get<DatabaseDriverFactory>().createDriver()) }
     single { TasksLocalDataSource(get()) }
+    single { TasksRemoteDataSource(get()) }
     includes(homeModule, createTaskModule, prefencresModule)
-    single { TasksRepository(get()) }
+    single { TasksRepository(get(), get(), get()) }
     single {
         createSupabaseClient(SUPABASE_URL,  SUPABASE_KEY) {
             install(Auth)
@@ -27,6 +30,11 @@ val appModule = module {
                 googleNativeLogin(SERVER_CLIENT_ID)
             }
             install(Postgrest)
+        }
+    }
+    single {
+        Connectivity {
+            autoStart = true
         }
     }
 }

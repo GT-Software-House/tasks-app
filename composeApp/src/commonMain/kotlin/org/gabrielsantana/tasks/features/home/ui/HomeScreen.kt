@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.gabrielsantana.tasks.features.settings.TaskFilter
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -61,7 +62,7 @@ fun HomeContent(
     onCreateTaskClick: () -> Unit,
     onSelectTaskFilter: (TaskFilter) -> Unit,
     onSettingsClick: () -> Unit,
-    onSelectTaskIndex: (Int ) -> Unit,
+    onSelectTaskIndex: (Int) -> Unit,
     onClearSelection: () -> Unit,
     onTaskCheckedChange: (newValue: Boolean, model: TaskUiModel) -> Unit,
     onDeleteClick: () -> Unit
@@ -204,7 +205,10 @@ fun TaskItem(
         modifier = modifier,
         colors = if (isSelected) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer) else CardDefaults.cardColors()
     ) {
-        Row(Modifier.padding(top = 12.dp, bottom = 12.dp, end = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            Modifier.padding(top = 12.dp, bottom = 12.dp, end = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             AnimatedVisibility(isSelected) {
                 Row(modifier = Modifier.padding(start = 12.dp)) {
                     Icon(Icons.Default.CheckCircle, null, tint = MaterialTheme.colorScheme.primary)
