@@ -8,11 +8,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
-import org.gabrielsantana.tasks.features.settings.appearance.data.PreferencesRepository
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.gabrielsantana.tasks.ui.App
 import org.gabrielsantana.tasks.ui.isDarkMode
 import org.gabrielsantana.tasks.ui.rememberAppState
-import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
 
@@ -22,7 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val appState = rememberAppState()
 
-            val darkTheme = appState.isDarkMode
+            val darkTheme = appState.themeMode.collectAsStateWithLifecycle().value.isDarkMode
             LaunchedEffect(darkTheme) {
                 enableEdgeToEdge(
                     statusBarStyle = SystemBarStyle.auto(

@@ -2,6 +2,8 @@
 
 package org.gabrielsantana.tasks.features.settings.appearance.data
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +16,8 @@ class PreferencesRepository(
 
     @OptIn(ExperimentalSettingsApi::class)
     fun getThemeMode(): Flow<ThemeMode> {
-        return flowSettings.getIntFlow(PreferencesKeys.THEME_MODE, 0).map { it.mapThemeMode() }
+        return flowSettings.getIntFlow(PreferencesKeys.THEME_MODE, DefaultPreferences.THEME_MODE)
+            .map { it.mapThemeMode() }
     }
 
     @OptIn(ExperimentalSettingsApi::class)
@@ -29,7 +32,10 @@ class PreferencesRepository(
 
     @OptIn(ExperimentalSettingsApi::class)
     fun getIsDynamicColorsEnabled(): Flow<Boolean> {
-        return flowSettings.getBooleanFlow(PreferencesKeys.IS_DYNAMIC_COLORS_ENABLED, false)
+        return flowSettings.getBooleanFlow(
+            PreferencesKeys.IS_DYNAMIC_COLORS_ENABLED,
+            defaultValue = DefaultPreferences.IS_DYNAMIC_COLORS_ENABLED
+        )
     }
 
     @OptIn(ExperimentalSettingsApi::class)
@@ -39,7 +45,10 @@ class PreferencesRepository(
 
     @OptIn(ExperimentalSettingsApi::class)
     fun getIsAmoledColorsEnabled(): Flow<Boolean> {
-        return flowSettings.getBooleanFlow(PreferencesKeys.IS_AMOLED_ENABLED, false)
+        return flowSettings.getBooleanFlow(
+            PreferencesKeys.IS_AMOLED_ENABLED,
+            defaultValue = DefaultPreferences.IS_AMOLED_ENABLED
+        )
     }
 
     @OptIn(ExperimentalSettingsApi::class)
@@ -48,9 +57,16 @@ class PreferencesRepository(
     }
 
     @OptIn(ExperimentalSettingsApi::class)
-    fun getSeedColor(): Flow<Int?> {
-        return flowSettings.getIntOrNullFlow(PreferencesKeys.SEED_COLOR)
+    fun getSeedColor(): Flow<Int> {
+        return flowSettings.getIntFlow(PreferencesKeys.SEED_COLOR, DefaultPreferences.SEED_COLOR)
     }
+}
+
+private object DefaultPreferences {
+    const val THEME_MODE = 2
+    const val IS_DYNAMIC_COLORS_ENABLED = false
+    const val IS_AMOLED_ENABLED = false
+    val SEED_COLOR = Color.Blue.toArgb()
 }
 
 private object PreferencesKeys {

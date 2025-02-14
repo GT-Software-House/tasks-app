@@ -6,7 +6,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.status.SessionStatus
@@ -33,7 +32,7 @@ class AppState(
     val isAmoled: StateFlow<Boolean> = preferencesRepository.getIsAmoledColorsEnabled()
         .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), false)
 
-    val seedColor: StateFlow<Color?> = preferencesRepository.getSeedColor().map { it?.let { Color(it) } }
+    val seedColor: StateFlow<Color?> = preferencesRepository.getSeedColor().map { Color(it) }
         .stateIn(coroutineScope, SharingStarted.WhileSubscribed(), null)
 
 
@@ -46,10 +45,10 @@ class AppState(
         )
 }
 
-val AppState.isDarkMode: Boolean
+val ThemeMode.isDarkMode: Boolean
     @Composable
     get() {
-        return if (themeMode.collectAsStateWithLifecycle().value is ThemeMode.System) isSystemInDarkTheme() else themeMode.value is ThemeMode.Dark
+        return if (this is ThemeMode.System) isSystemInDarkTheme() else this is ThemeMode.Dark
     }
 
 sealed class ThemeMode {

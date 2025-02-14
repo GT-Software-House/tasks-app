@@ -32,7 +32,7 @@ fun App(
     navController: NavHostController = rememberNavController(),
     appState: AppState = rememberAppState(getKoin().get()),
 ) {
-    val darkTheme = appState.isDarkMode
+    val darkTheme = appState.themeMode.collectAsStateWithLifecycle().value.isDarkMode
     val isAmoled by appState.isAmoled.collectAsStateWithLifecycle()
     val colorSeed by appState.seedColor.collectAsStateWithLifecycle()
     val isDynamicColorEnabled by appState.isDynamicColorEnabled.collectAsStateWithLifecycle()
