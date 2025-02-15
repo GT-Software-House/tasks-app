@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import androidx.work.Configuration
 import org.gabrielsantana.tasks.data.createDataStore
-import org.gabrielsantana.tasks.data.dataStoreFileName
 import org.gabrielsantana.tasks.data.driver.AndroidDatabaseDriverFactory
 import org.gabrielsantana.tasks.data.driver.DatabaseDriverFactory
 import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
@@ -25,7 +24,7 @@ class TasksApp : Application(), Configuration.Provider {
             factory<DatabaseDriverFactory> { AndroidDatabaseDriverFactory(this@TasksApp) }
             single {
                 val context: Context = get()
-                createDataStore(producePath = { context.filesDir.resolve(dataStoreFileName).absolutePath })
+                createDataStore(producePath = { fileName -> context.filesDir.resolve(fileName).absolutePath })
             }
             worker {
                 SyncTaskRemotelyWorker(get(), get(), get(), get(), get())

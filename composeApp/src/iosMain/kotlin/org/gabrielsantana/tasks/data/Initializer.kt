@@ -3,11 +3,14 @@ package org.gabrielsantana.tasks.data
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.Foundation.*
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSURL
+import platform.Foundation.NSUserDomainMask
 
 @OptIn(ExperimentalForeignApi::class)
 fun createDataStore(): DataStore<Preferences> = createDataStore(
-    producePath = {
+    producePath = { fileName ->
         val documentDirectory: NSURL? = NSFileManager.defaultManager.URLForDirectory(
             directory = NSDocumentDirectory,
             inDomain = NSUserDomainMask,
@@ -15,6 +18,6 @@ fun createDataStore(): DataStore<Preferences> = createDataStore(
             create = false,
             error = null,
         )
-        requireNotNull(documentDirectory).path + "/$dataStoreFileName"
+        requireNotNull(documentDirectory).path + "/$fileName"
     }
 )
