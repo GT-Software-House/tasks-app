@@ -6,6 +6,7 @@ data class HomeUiState(
     val tasks: List<TaskUiModel> = emptyList(),
     val selectedTasksIndex: Set<Int> = emptySet(),
     val selectedTaskFilter: TaskFilter = TaskFilter.ALL,
+    val haveTasksWaitingSync: Boolean = false
 ) {
     val isSelectionMode: Boolean
         get() = selectedTasksIndex.isNotEmpty()

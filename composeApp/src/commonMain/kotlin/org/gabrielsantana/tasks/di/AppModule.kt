@@ -14,15 +14,16 @@ import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
 import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
 import org.gabrielsantana.tasks.features.create.di.createTaskModule
 import org.gabrielsantana.tasks.features.home.di.homeModule
-import org.gabrielsantana.tasks.features.settings.appearance.di.prefencresModule
+import org.gabrielsantana.tasks.features.settings.appearance.di.preferencesModule
 import org.koin.dsl.module
 
 val appModule = module {
+    //TODO: many 'singles', improve this
     single { TasksDatabase(get<DatabaseDriverFactory>().createDriver()) }
     single { TasksLocalDataSource(get()) }
     single { TasksRemoteDataSource(get()) }
-    includes(homeModule, createTaskModule, prefencresModule)
-    single { TasksRepository(get(), get(), get()) }
+    includes(homeModule, createTaskModule, preferencesModule)
+    single { TasksRepository(get(), get(), get(), get()) }
     single {
         createSupabaseClient(SUPABASE_URL,  SUPABASE_KEY) {
             install(Auth)

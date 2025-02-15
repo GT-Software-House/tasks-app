@@ -1,23 +1,69 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package org.gabrielsantana.tasks.features.home.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RichTooltip
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TooltipState
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTooltipState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.gabrielsantana.tasks.features.settings.TaskFilter
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -68,25 +114,13 @@ fun HomeContent(
     onDeleteClick: () -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
+    val tooltipState = rememberTooltipState(isPersistent = true)
+    val scope = rememberCoroutineScope()
 
     if (showDeleteDialog) {
-        AlertDialog(
+        DeleteWarningDialog(
             onDismissRequest = { showDeleteDialog = !showDeleteDialog },
-            confirmButton = {
-                TextButton(onClick = {
-                    onDeleteClick()
-                    showDeleteDialog = !showDeleteDialog
-                }) {
-                    Text("Delete")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDeleteDialog = !showDeleteDialog }
-                ) { Text("Cancel") }
-            },
-            title = { Text("Delete selected tasks?") },
-            text = { Text("This action can't be undone") }
+            onDeleteClick = onDeleteClick
         )
     }
 
@@ -97,33 +131,14 @@ fun HomeContent(
                 uiState.isSelectionMode
             ) {
                 if (it) {
-                    TopAppBar(
-                        title = { Text(uiState.selectedTasksIndex.size.toString()) },
-                        scrollBehavior = scrollBehavior,
-                        navigationIcon = {
-                            IconButton(onClick = onClearSelection) {
-                                Icon(
-                                    Icons.AutoMirrored.Default.ArrowBack,
-                                    "Close selection"
-                                )
-                            }
-                        },
-                        actions = {
-                            IconButton(onClick = { showDeleteDialog = !showDeleteDialog }) {
-                                Icon(Icons.Default.Delete, "Clear Tasks")
-                            }
-                        }
+                    SelectionTopAppBar(
+                        uiState,
+                        scrollBehavior,
+                        onClearSelection,
+                        onDeleteClick = { showDeleteDialog = !showDeleteDialog }
                     )
                 } else {
-                    TopAppBar(
-                        title = { Text("Your tasks") },
-                        scrollBehavior = scrollBehavior,
-                        actions = {
-                            IconButton(onClick = onSettingsClick) {
-                                Icon(Icons.Default.Settings, null)
-                            }
-                        }
-                    )
+                    NormalTopAppBar(scrollBehavior, uiState, scope, tooltipState, onSettingsClick)
                 }
             }
 
@@ -148,7 +163,7 @@ fun HomeContent(
                 ) {
                     options.forEachIndexed { index, filter ->
                         SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                            shape = SegmentedButtonDefaults.itemShape(index, count = options.size),
                             onClick = { onSelectTaskFilter(filter) },
                             selected = filter == uiState.selectedTaskFilter
                         ) {
@@ -188,6 +203,99 @@ fun HomeContent(
             }
         }
     }
+}
+
+@Composable
+fun DeleteWarningDialog(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = {
+                onDeleteClick()
+                onDismissRequest()
+            }) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismissRequest
+            ) { Text("Cancel") }
+        },
+        title = { Text("Delete selected tasks?") },
+        text = { Text("This action can't be undone") },
+        modifier = modifier
+    )
+
+}
+
+@Composable
+private fun SelectionTopAppBar(
+    uiState: HomeUiState,
+    scrollBehavior: TopAppBarScrollBehavior,
+    onClearSelection: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    TopAppBar(
+        title = { Text(uiState.selectedTasksIndex.size.toString()) },
+        scrollBehavior = scrollBehavior,
+        navigationIcon = {
+            IconButton(onClick = onClearSelection) {
+                Icon(
+                    Icons.AutoMirrored.Default.ArrowBack,
+                    "Close selection"
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = onDeleteClick) {
+                Icon(Icons.Default.Delete, "Clear Tasks")
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun NormalTopAppBar(
+    scrollBehavior: TopAppBarScrollBehavior,
+    uiState: HomeUiState,
+    scope: CoroutineScope,
+    tooltipState: TooltipState,
+    onSettingsClick: () -> Unit
+) {
+    TopAppBar(
+        title = { Text("Your tasks") },
+        scrollBehavior = scrollBehavior,
+        actions = {
+            AnimatedVisibility(uiState.haveTasksWaitingSync) {
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+                    tooltip = {
+                        RichTooltip(
+                            title = { Text("Sync") },
+                        ) {
+                            Text("There's no synced data.\nConnect to a network.")
+                        }
+                    },
+                    state = tooltipState
+                ) {
+                    IconButton(onClick = {
+                        scope.launch { tooltipState.show() }
+                    }) {
+                        Icon(Icons.Default.CloudOff, null)
+                    }
+                }
+            }
+            IconButton(onClick = onSettingsClick) {
+                Icon(Icons.Default.Settings, null)
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -55,7 +55,15 @@ kotlin {
             implementation(libs.sqldelight.android)
             //koin
             implementation(libs.koin.android)
+            implementation(libs.koin.android.workmanager)
             implementation(libs.ktor.client.okhttp)
+
+            // Kotlin + coroutines
+            implementation(libs.androidx.work.runtime.ktx)
+            // optional - GCMNetworkManager support
+            implementation(libs.androidx.work.gcm)
+            // optional - Multiprocess support
+            implementation(libs.androidx.work.multiprocess)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -142,6 +150,10 @@ android {
         getByName("release") {
             isMinifyEnabled = false
         }
+    }
+    buildFeatures {
+        compose = true
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

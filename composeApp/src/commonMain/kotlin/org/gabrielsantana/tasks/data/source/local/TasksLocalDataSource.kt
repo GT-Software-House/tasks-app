@@ -48,8 +48,18 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
         queries.updateIsChecked(isCompleted = isChecked.toLong(), id = id)
     }
 
-    fun getById(id: Long): TaskEntity {
-        return queries.getById(id = id).executeAsOne()
+    /**
+     * Retrieves a TaskEntity from the database by its ID.
+     *
+     * @param id The unique identifier of the TaskEntity to retrieve.
+     * @return The TaskEntity with the specified ID, or null if no such entity exists.
+     */
+    fun getById(id: Long): TaskEntity? {
+        return try {
+            queries.getById(id = id).executeAsOne()
+        } catch (_: NullPointerException) {
+            null
+        }
     }
 
 }

@@ -8,13 +8,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
 import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.data.model.Task
 import org.gabrielsantana.tasks.features.settings.TaskFilter
 import kotlin.time.Duration.Companion.milliseconds
 
 class HomeViewModel(
-    private val tasksRepository: TasksRepository
+    private val tasksRepository: TasksRepository,
+    private val scheduler: TaskSyncScheduler
 ) : ViewModel() {
 
     private var getTasksJob: Job? = null
@@ -24,6 +26,14 @@ class HomeViewModel(
 
     init {
         getTasksJob = viewModelScope.launch { loadTasks() }
+        //TODO: collect this in another place?
+        viewModelScope.launch {
+            scheduler.tasksWaitingSync().collect { haveTasksWaitingSync ->
+                _uiState.update {
+                    it.copy(haveTasksWaitingSync = haveTasksWaitingSync)
+                }
+            }
+        }
     }
 
     fun selectTask(taskIndex: Int) = _uiState.update { state ->
@@ -45,6 +55,8 @@ class HomeViewModel(
         clearSelectedTasks()
     }
 
+    //Used by iOS native UI
+    @Suppress("unused")
     fun deleteTask(task: TaskUiModel) {
         tasksRepository.deleteTask(task.id.toLong())
     }
