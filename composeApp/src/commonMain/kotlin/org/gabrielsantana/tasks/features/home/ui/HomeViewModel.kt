@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
 import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.data.model.Task
+import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
 import org.gabrielsantana.tasks.features.settings.TaskFilter
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -28,9 +28,9 @@ class HomeViewModel(
         getTasksJob = viewModelScope.launch { loadTasks() }
         //TODO: collect this in another place?
         viewModelScope.launch {
-            scheduler.tasksWaitingSync().collect { haveTasksWaitingSync ->
+            scheduler.tasksWaitingSync().collect { syncStatus ->
                 _uiState.update {
-                    it.copy(haveTasksWaitingSync = haveTasksWaitingSync)
+                    it.copy(syncStatus = syncStatus)
                 }
             }
         }

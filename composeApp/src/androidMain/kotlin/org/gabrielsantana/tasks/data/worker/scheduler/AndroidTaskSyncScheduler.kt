@@ -12,6 +12,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkQuery
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.gabrielsantana.tasks.data.scheduler.QueueSyncStatus
 import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
 import org.gabrielsantana.tasks.data.worker.SyncTaskRemotelyWorker
 import java.util.concurrent.TimeUnit
@@ -40,9 +41,15 @@ class AndroidTaskSyncScheduler(
             .enqueue(syncRequest)
     }
 
-    override fun tasksWaitingSync(): Flow<Boolean> =
+    override fun tasksWaitingSync(): Flow<QueueSyncStatus> =
         WorkManager
             .getInstance(appContext)
-            .getWorkInfosFlow(WorkQuery.fromStates(WorkInfo.State.ENQUEUED))
-            .map { it.isNotEmpty() }
+            .getWorkInfosFlow(WorkQuery.fromStates(WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING))
+            .map { list ->
+                when {
+                    list.find { it.state == WorkInfo.State.RUNNING } != null -> QueueSyncStatus.Syncing
+                    list.find { it.state == WorkInfo.State.ENQUEUED } != null -> QueueSyncStatus.Waiting
+                    else -> QueueSyncStatus.Empty
+                }
+            }
 }
