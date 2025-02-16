@@ -27,7 +27,7 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
                 id = null,
                 title = title,
                 description = description,
-                isCompleted = isCompleted.toLong(),
+                isCompleted = isCompleted,
                 createdAtTimestamp = createdAtTimestamp,
                 completedAtTimestamp = null,
                 updatedAtTimestamp = null
@@ -45,7 +45,7 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
     }
 
     fun updateIsChecked(id: Long, isChecked: Boolean) {
-        queries.updateIsChecked(isCompleted = isChecked.toLong(), id = id)
+        queries.updateIsChecked(isCompleted = isChecked, id = id)
     }
 
     /**
@@ -62,8 +62,4 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
         }
     }
 
-}
-
-private fun Boolean.toLong(): Long {
-    return if (this) 1L else 0L
 }

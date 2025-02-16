@@ -6,7 +6,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
-import org.gabrielsantana.tasks.data.convertToBoolean
 import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
 import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
 
@@ -29,7 +28,7 @@ class SyncTaskRemotelyWorker(
                     id = task.id.toInt(),
                     title = task.title,
                     description = task.description,
-                    isCompleted = task.isCompleted.convertToBoolean(),
+                    isCompleted = task.isCompleted,
                     createdAtTimestamp = task.createdAtTimestamp,
                 )
                 return Result.success()

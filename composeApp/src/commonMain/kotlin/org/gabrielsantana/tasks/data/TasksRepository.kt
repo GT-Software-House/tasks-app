@@ -19,7 +19,9 @@ class TasksRepository(
 
     fun deleteTask(id: Long) = localDataSource.delete(id)
 
-    fun updateTask(id: Long, isChecked: Boolean) = localDataSource.updateIsChecked(id, isChecked)
+    fun updateTask(id: Long, isChecked: Boolean) {
+        localDataSource.updateIsChecked(id, isChecked)
+    }
 
     suspend fun createTask(title: String, description: String, isCompleted: Boolean = false) {
         val newTask = localDataSource.insert(title, description, isCompleted)
