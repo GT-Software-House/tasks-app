@@ -14,7 +14,7 @@ data class HomeUiState(
 }
 
 data class TaskUiModel(
-    val id: Int,
+    val uuid: String,
     val title: String,
     val description: String,
     val isChecked: Boolean

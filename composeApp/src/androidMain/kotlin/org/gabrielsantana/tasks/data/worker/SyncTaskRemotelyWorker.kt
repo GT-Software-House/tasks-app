@@ -17,15 +17,16 @@ class SyncTaskRemotelyWorker(
     workerParams: WorkerParameters
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
-        val taskId = inputData.getLong("taskId", -1)
-        if (taskId != -1L) {
+        val taskId = inputData.getString("taskUuid")
+        if (taskId != null) {
             try {
                 //here we can have a problem on finding the task or the task just has been deleted. How to diff the cases?
                 val task = tasksLocalDataSource.getById(taskId) ?: return Result.success()
                 //need to load the session manually because it's cleaned on app close
                 supabaseClient.auth.loadFromStorage()
                 tasksRemoteDataSource.insert(
-                    id = task.id.toInt(),
+                    uuid = task.uuid,
+                    deviceId = task.deviceId,
                     title = task.title,
                     description = task.description,
                     isCompleted = task.isCompleted,

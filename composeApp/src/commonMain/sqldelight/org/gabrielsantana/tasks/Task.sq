@@ -1,22 +1,24 @@
 CREATE TABLE IF NOT EXISTS TaskEntity (
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    uuid TEXT NOT NULL,
+    deviceId TEXT NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     isCompleted INTEGER AS kotlin.Boolean NOT NULL,
     completedAtTimestamp INTEGER,
     createdAtTimestamp INTEGER NOT NULL,
-    updatedAtTimestamp INTEGER
+    updatedAtTimestamp INTEGER,
+    PRIMARY KEY(uuid , deviceId)
 );
 
 insert:
-INSERT OR REPLACE INTO TaskEntity(id, title, description, isCompleted, completedAtTimestamp, createdAtTimestamp, updatedAtTimestamp)
-VALUES(?,?,?,?, ?, ?, ?);
+INSERT OR REPLACE INTO TaskEntity(uuid, deviceId, title, description, isCompleted, completedAtTimestamp, createdAtTimestamp, updatedAtTimestamp)
+VALUES(?,?,?,?, ?, ?, ?, ?);
 
 selectLastInsertRowId:
 SELECT last_insert_rowid();
 
 getById:
-SELECT * FROM TaskEntity WHERE id IS :id;
+SELECT * FROM TaskEntity WHERE uuid IS :uuid;
 
 getAll:
 SELECT * FROM TaskEntity;
@@ -28,9 +30,9 @@ SELECT * FROM TaskEntity;
 
 delete:
 DELETE FROM TaskEntity
-WHERE id IS :id;
+WHERE uuid IS :uuid;
 
 updateIsChecked:
 UPDATE TaskEntity
 SET isCompleted = :isCompleted
-WHERE id IS :id;
+WHERE uuid IS :uuid;

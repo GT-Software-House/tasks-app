@@ -17,14 +17,14 @@ class TasksRepository(
 ) {
     fun getTasks(): Flow<List<Task>> = localDataSource.getAll().map { it.map { entity -> entity.asTask() } }
 
-    fun deleteTask(id: Long) = localDataSource.delete(id)
+    fun deleteTask(uuid: String) = localDataSource.delete(uuid)
 
-    fun updateTask(id: Long, isChecked: Boolean) {
-        localDataSource.updateIsChecked(id, isChecked)
+    fun updateTask(uuid: String, isChecked: Boolean) {
+        localDataSource.updateIsChecked(uuid, isChecked)
     }
 
     suspend fun createTask(title: String, description: String, isCompleted: Boolean = false) {
         val newTask = localDataSource.insert(title, description, isCompleted)
-        taskSyncScheduler.scheduleTask(taskId = newTask.id)
+        taskSyncScheduler.scheduleTask(taskUuid = newTask.uuid)
     }
 }

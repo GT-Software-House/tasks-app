@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalUuidApi::class)
+
 package org.gabrielsantana.tasks.data.source.local
 
 import app.cash.sqldelight.coroutines.asFlow
@@ -8,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
 import org.gabrielsantana.tasks.TaskEntity
 import org.gabrielsantana.tasks.TasksDatabase
+import org.gabrielsantana.tasks.getDeviceId
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class TasksLocalDataSource(private val db: TasksDatabase) {
     private val queries = db.taskQueries
@@ -23,29 +28,30 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
         createdAtTimestamp: Long = Clock.System.now().toEpochMilliseconds(),
     ): TaskEntity {
         return queries.transactionWithResult {
+            val uuid = Uuid.random().toString()
             db.taskQueries.insert(
-                id = null,
+                uuid = uuid,
+                deviceId = getDeviceId(),
                 title = title,
                 description = description,
                 isCompleted = isCompleted,
                 createdAtTimestamp = createdAtTimestamp,
                 completedAtTimestamp = null,
-                updatedAtTimestamp = null
+                updatedAtTimestamp = null,
             )
-            val id = db.taskQueries.selectLastInsertRowId().executeAsOne()
-            db.taskQueries.getById(id).executeAsOne()
+            db.taskQueries.getById(uuid = uuid).executeAsOne()
         }
 
     }
 
     fun getAll(): Flow<List<TaskEntity>> = queries.getAll().asFlow().mapToList(Dispatchers.IO)
 
-    fun delete(id: Long) {
-        queries.delete(id = id)
+    fun delete(uuid: String) {
+        queries.delete(uuid = uuid)
     }
 
-    fun updateIsChecked(id: Long, isChecked: Boolean) {
-        queries.updateIsChecked(isCompleted = isChecked, id = id)
+    fun updateIsChecked(uuid: String, isChecked: Boolean) {
+        queries.updateIsChecked(isCompleted = isChecked, uuid = uuid)
     }
 
     /**
@@ -54,9 +60,9 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
      * @param id The unique identifier of the TaskEntity to retrieve.
      * @return The TaskEntity with the specified ID, or null if no such entity exists.
      */
-    fun getById(id: Long): TaskEntity? {
+    fun getById(uuid: String): TaskEntity? {
         return try {
-            queries.getById(id = id).executeAsOne()
+            queries.getById(uuid = uuid).executeAsOne()
         } catch (_: NullPointerException) {
             null
         }

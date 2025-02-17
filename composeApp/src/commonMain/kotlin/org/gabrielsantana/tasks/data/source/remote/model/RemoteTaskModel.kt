@@ -4,7 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RemoteTaskModel(
-    val id: Int,
+    val uuid: String,
+    val deviceId: String,
     val title: String,
     val description: String,
     val isCompleted: Boolean,

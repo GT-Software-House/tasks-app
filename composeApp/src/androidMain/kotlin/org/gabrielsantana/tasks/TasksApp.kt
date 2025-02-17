@@ -18,8 +18,18 @@ import org.koin.dsl.module
 
 class TasksApp : Application(), Configuration.Provider {
 
+    companion object {
+        @Volatile
+        private var appContext: Context? = null
+
+        fun getAppContext(): Context {
+            return appContext!!
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
+        appContext = this
         val androidModule = module {
             factory<DatabaseDriverFactory> { AndroidDatabaseDriverFactory(this@TasksApp) }
             single {
