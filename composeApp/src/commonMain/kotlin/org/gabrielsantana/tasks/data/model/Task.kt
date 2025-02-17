@@ -3,7 +3,8 @@ package org.gabrielsantana.tasks.data.model
 import kotlinx.datetime.Instant
 
 data class Task(
-    val id: Int,
+    val uuid: String,
+    val deviceId: String,
     val title: String,
     val description: String,
     val isCompleted: Boolean,

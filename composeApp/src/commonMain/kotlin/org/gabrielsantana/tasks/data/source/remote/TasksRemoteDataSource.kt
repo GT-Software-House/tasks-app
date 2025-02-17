@@ -1,7 +1,6 @@
 package org.gabrielsantana.tasks.data.source.remote
 
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.datetime.Clock
 import org.gabrielsantana.tasks.data.source.remote.model.RemoteTaskModel
@@ -11,15 +10,16 @@ class TasksRemoteDataSource(
 ) {
 
     suspend fun insert(
-        id: Int,
+        uuid: String,
+        deviceId: String,
         title: String,
         description: String,
         isCompleted: Boolean,
         createdAtTimestamp: Long = Clock.System.now().toEpochMilliseconds(),
     ) {
-        supabaseClient.auth.currentUserOrNull()?.id
         val task = RemoteTaskModel(
-            id = id,
+            uuid = uuid,
+            deviceId = deviceId,
             title = title,
             description = description,
             isCompleted = isCompleted,

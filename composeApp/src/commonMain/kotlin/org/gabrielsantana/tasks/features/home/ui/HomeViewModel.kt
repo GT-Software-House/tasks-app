@@ -50,7 +50,7 @@ class HomeViewModel(
 
     fun deleteSelectedTasks(): Unit = with(_uiState.value) {
         selectedTasksIndex.forEach { taskIndex ->
-            tasksRepository.deleteTask(tasks[taskIndex].id.toLong())
+            tasksRepository.deleteTask(tasks[taskIndex].uuid)
         }
         clearSelectedTasks()
     }
@@ -58,7 +58,7 @@ class HomeViewModel(
     //Used by iOS native UI
     @Suppress("unused")
     fun deleteTask(task: TaskUiModel) {
-        tasksRepository.deleteTask(task.id.toLong())
+        tasksRepository.deleteTask(task.uuid)
     }
 
     fun searchTasks(query: String) {
@@ -84,7 +84,7 @@ class HomeViewModel(
     fun selectTaskFilter(newFilter: TaskFilter) {
         getTasksJob?.cancel()
         getTasksJob = viewModelScope.launch {
-            val tasks = tasksRepository.getTasks().collect { tasks ->
+            tasksRepository.getTasks().collect { tasks ->
                 _uiState.update { state ->
                     state.copy(
                         selectedTaskFilter = newFilter,
@@ -111,7 +111,7 @@ class HomeViewModel(
 
     fun updateTask(isChecked: Boolean, task: TaskUiModel) {
         viewModelScope.launch {
-            tasksRepository.updateTask(task.id.toLong(), isChecked)
+            tasksRepository.updateTask(task.uuid, isChecked)
         }
     }
 
@@ -119,5 +119,5 @@ class HomeViewModel(
 
 
 fun Task.toUiModel(): TaskUiModel {
-    return TaskUiModel(id.toInt(), title, description, isCompleted)
+    return TaskUiModel(uuid, title, description, isCompleted)
 }

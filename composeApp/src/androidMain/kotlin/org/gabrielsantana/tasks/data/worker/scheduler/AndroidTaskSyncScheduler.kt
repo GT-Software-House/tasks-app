@@ -20,12 +20,12 @@ import java.util.concurrent.TimeUnit
 class AndroidTaskSyncScheduler(
     private val appContext: Context
 ) : TaskSyncScheduler {
-    override suspend fun scheduleTask(taskId: Long) {
+    override suspend fun scheduleTask(taskUuid: String) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         val data = Data.Builder()
-            .putLong("taskId", taskId)
+            .putString("taskUuid", taskUuid)
             .build()
         val syncRequest = OneTimeWorkRequestBuilder<SyncTaskRemotelyWorker>()
             .setConstraints(constraints)
