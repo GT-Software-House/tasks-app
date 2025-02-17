@@ -34,7 +34,7 @@ class TasksRepository(
     suspend fun syncRemoteWithLocal(taskUuid: String): Boolean {
         //here we can have a problem on finding the task or the task just has been deleted. How to diff the cases?
         val task = localDataSource.getById(taskUuid) ?: return true
-        return remoteDataSource.update(task.asRemoteTask())
+        return remoteDataSource.upsert(task.asRemoteTask())
     }
 
 }

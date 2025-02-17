@@ -35,7 +35,7 @@ class TasksRemoteDataSource(
         supabaseClient.from(TABLE_NAME_TASKS).insert(task)
     }
 
-    suspend fun update(
+    suspend fun upsert(
         task: RemoteTaskModel,
     ): Boolean {
         val count = supabaseClient.from(TABLE_NAME_TASKS).upsert(task) {
