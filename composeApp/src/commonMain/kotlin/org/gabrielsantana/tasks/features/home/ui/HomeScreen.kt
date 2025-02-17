@@ -76,6 +76,7 @@ import org.gabrielsantana.tasks.data.scheduler.QueueSyncStatus
 import org.gabrielsantana.tasks.features.settings.TaskFilter
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.random.Random
 
 
 @Composable
@@ -381,9 +382,9 @@ private fun TaskItemPreview() {
 @Composable
 private fun DefaultPreview() {
     val tasks = listOf(
-        TaskUiModel("", "Task 1", "Description 1", false),
-        TaskUiModel("", "Task 2", "Description 2", true),
-        TaskUiModel("", "Task 3", "Description 3", false),
+        TaskUiModel(Random.nextInt().toString(), "Task 1", "Description 1", false),
+        TaskUiModel(Random.nextInt().toString(), "Task 2", "Description 2", true),
+        TaskUiModel(Random.nextInt().toString(), "Task 3", "Description 3", false),
     )
     HomeContent(
         uiState = HomeUiState(
