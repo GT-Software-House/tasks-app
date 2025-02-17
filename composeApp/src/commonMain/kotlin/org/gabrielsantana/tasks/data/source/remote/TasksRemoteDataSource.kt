@@ -2,12 +2,17 @@ package org.gabrielsantana.tasks.data.source.remote
 
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Count
 import kotlinx.datetime.Clock
 import org.gabrielsantana.tasks.data.source.remote.model.RemoteTaskModel
 
 class TasksRemoteDataSource(
     private val supabaseClient: SupabaseClient
 ) {
+
+    companion object {
+        private const val TABLE_NAME_TASKS = "tasks"
+    }
 
     suspend fun insert(
         uuid: String,
@@ -23,11 +28,19 @@ class TasksRemoteDataSource(
             title = title,
             description = description,
             isCompleted = isCompleted,
-            completedAt = createdAtTimestamp.toString(),
+            completedAt = null,
             updatedAt = null,
             createdAt = createdAtTimestamp.toString(),
         )
-        supabaseClient.from("tasks").insert(task)
+        supabaseClient.from(TABLE_NAME_TASKS).insert(task)
     }
 
+    suspend fun update(
+        task: RemoteTaskModel,
+    ): Boolean {
+        val count = supabaseClient.from(TABLE_NAME_TASKS).upsert(task) {
+            count(Count.EXACT)
+        }.countOrNull() ?: 0L
+        return count > 0L
+    }
 }

@@ -8,6 +8,7 @@ import org.gabrielsantana.tasks.data.driver.AndroidDatabaseDriverFactory
 import org.gabrielsantana.tasks.data.driver.DatabaseDriverFactory
 import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
 import org.gabrielsantana.tasks.data.worker.SyncTaskRemotelyWorker
+import org.gabrielsantana.tasks.data.worker.TaskUpdateSyncerWorker
 import org.gabrielsantana.tasks.data.worker.scheduler.AndroidTaskSyncScheduler
 import org.gabrielsantana.tasks.di.appModule
 import org.koin.android.ext.koin.androidContext
@@ -38,6 +39,9 @@ class TasksApp : Application(), Configuration.Provider {
             }
             worker {
                 SyncTaskRemotelyWorker(get(), get(), get(), get(), get())
+            }
+            worker {
+                TaskUpdateSyncerWorker(get(), get(), get(), get())
             }
             factory<TaskSyncScheduler> {
                 AndroidTaskSyncScheduler(get())

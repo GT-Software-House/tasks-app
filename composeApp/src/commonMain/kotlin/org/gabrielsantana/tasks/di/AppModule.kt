@@ -23,14 +23,16 @@ val appModule = module {
     single { TasksLocalDataSource(get()) }
     single { TasksRemoteDataSource(get()) }
     includes(homeModule, createTaskModule, preferencesModule)
-    single { TasksRepository(get(), get(), get(), get()) }
+    single { TasksRepository(get(), get(), get()) }
     single {
         createSupabaseClient(SUPABASE_URL,  SUPABASE_KEY) {
             install(Auth)
             install(ComposeAuth) {
                 googleNativeLogin(SERVER_CLIENT_ID)
             }
-            install(Postgrest)
+            install(Postgrest) {
+                defaultSchema = "public"
+            }
         }
     }
     single {
