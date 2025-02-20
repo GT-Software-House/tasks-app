@@ -183,7 +183,7 @@ fun HomeContent(
                 }
                 Spacer(Modifier.height(4.dp))
             }
-            items(uiState.tasks, key = { task -> task.uuid }) { task ->
+            items(uiState.tasks) { task ->
                 val taskIndex = uiState.tasks.indexOf(task)
                 TaskItem(
                     title = task.title,

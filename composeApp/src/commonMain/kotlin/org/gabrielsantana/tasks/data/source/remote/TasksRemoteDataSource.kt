@@ -43,4 +43,10 @@ class TasksRemoteDataSource(
         }.countOrNull() ?: 0L
         return count > 0L
     }
+
+    suspend fun getAll(): List<RemoteTaskModel> {
+        return supabaseClient.from(TABLE_NAME_TASKS).select().decodeList()
+    }
+
+
 }

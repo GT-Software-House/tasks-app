@@ -8,13 +8,16 @@ import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
 import org.gabrielsantana.tasks.data.source.local.model.asRemoteTask
 import org.gabrielsantana.tasks.data.source.local.model.asTask
 import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
+import org.gabrielsantana.tasks.data.source.remote.model.asTaskEntity
 
 class TasksRepository(
     private val taskSyncScheduler: TaskSyncScheduler,
     private val localDataSource: TasksLocalDataSource,
     private val remoteDataSource: TasksRemoteDataSource,
 ) {
-    fun getTasks(): Flow<List<Task>> = localDataSource.getAll().map { it.map { entity -> entity.asTask() } }
+    fun getTasks(): Flow<List<Task>> = localDataSource.getAll().map {
+        it.map { entity -> entity.asTask() }.sortedBy { it.createdAt.epochSeconds }
+    }
 
     fun deleteTask(uuid: String) = localDataSource.delete(uuid)
 
@@ -35,6 +38,22 @@ class TasksRepository(
         //here we can have a problem on finding the task or the task just has been deleted. How to diff the cases?
         val task = localDataSource.getById(taskUuid) ?: return true
         return remoteDataSource.upsert(task.asRemoteTask())
+    }
+
+    suspend fun syncLocalWithRemote() {
+        val tasks = remoteDataSource.getAll()
+        tasks.forEach { task ->
+            localDataSource.upsert(task.asTaskEntity())
+        }
+        //TODO: make the right choice and refactor
+//        if (localDataSource.getAll().first().isEmpty()) {
+//            val tasks = remoteDataSource.getAll()
+//            tasks.forEach { task ->
+//                localDataSource.upsert(task.asTaskEntity())
+//            }
+//        } else {
+//            //fetch only tasks that are not saved locally
+//        }
     }
 
 }

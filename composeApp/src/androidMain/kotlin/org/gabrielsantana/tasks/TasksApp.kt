@@ -11,13 +11,14 @@ import org.gabrielsantana.tasks.data.worker.SyncTaskRemotelyWorker
 import org.gabrielsantana.tasks.data.worker.TaskUpdateSyncerWorker
 import org.gabrielsantana.tasks.data.worker.scheduler.AndroidTaskSyncScheduler
 import org.gabrielsantana.tasks.di.appModule
+import org.gabrielsantana.tasks.initializer.KoinDeclaration
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.androidx.workmanager.koin.workManagerFactory
-import org.koin.core.context.startKoin
+import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-class TasksApp : Application(), Configuration.Provider {
+class TasksApp : Application(), Configuration.Provider, KoinDeclaration {
 
     companion object {
         @Volatile
@@ -31,6 +32,19 @@ class TasksApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         appContext = this
+    }
+
+    override val workManagerConfiguration = if (BuildConfig.DEBUG) {
+        Configuration.Builder()
+            .setMinimumLoggingLevel(android.util.Log.DEBUG)
+            .build()
+    } else {
+        Configuration.Builder()
+            .setMinimumLoggingLevel(android.util.Log.ERROR)
+            .build()
+    }
+
+    override fun declaration(): KoinAppDeclaration = {
         val androidModule = module {
             factory<DatabaseDriverFactory> { AndroidDatabaseDriverFactory(this@TasksApp) }
             single {
@@ -47,22 +61,9 @@ class TasksApp : Application(), Configuration.Provider {
                 AndroidTaskSyncScheduler(get())
             }
         }
-
-        startKoin {
-            androidContext(this@TasksApp)
-            modules(androidModule + appModule)
-            workManagerFactory()
-        }
-    }
-
-    override val workManagerConfiguration = if (BuildConfig.DEBUG) {
-        Configuration.Builder()
-            .setMinimumLoggingLevel(android.util.Log.DEBUG)
-            .build()
-    } else {
-        Configuration.Builder()
-            .setMinimumLoggingLevel(android.util.Log.ERROR)
-            .build()
+        androidContext(this@TasksApp)
+        modules(androidModule + appModule)
+        workManagerFactory()
     }
 
 }

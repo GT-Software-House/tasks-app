@@ -17,7 +17,6 @@ import kotlin.uuid.Uuid
 class TasksLocalDataSource(private val db: TasksDatabase) {
     private val queries = db.taskQueries
 
-    // Set id = null to let SQLDelight autogenerate the id
     /**
      * Create and return [TaskEntity]
      */
@@ -42,6 +41,20 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
             db.taskQueries.getById(uuid = uuid).executeAsOne()
         }
 
+    }
+
+    fun upsert(task: TaskEntity) {
+        queries.insert(
+            uuid = task.uuid,
+            deviceId = task.deviceId,
+            title = task.title,
+            description = task.description,
+            isCompleted = task.isCompleted,
+            completedAtTimestamp = task.completedAtTimestamp,
+            createdAtTimestamp = task.createdAtTimestamp,
+            updatedAtTimestamp = task.updatedAtTimestamp
+
+        )
     }
 
     fun getAll(): Flow<List<TaskEntity>> = queries.getAll().asFlow().mapToList(Dispatchers.IO)

@@ -12,10 +12,3 @@ data class HomeUiState(
     val isSelectionMode: Boolean
         get() = selectedTasksIndex.isNotEmpty()
 }
-
-data class TaskUiModel(
-    val uuid: String,
-    val title: String,
-    val description: String,
-    val isChecked: Boolean
-)

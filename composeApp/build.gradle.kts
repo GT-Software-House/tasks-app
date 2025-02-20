@@ -57,7 +57,8 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.android.workmanager)
             implementation(libs.ktor.client.okhttp)
-
+            implementation(libs.androidx.startup.runtime)
+            implementation(libs.androidx.core.splashscreen)
             // Kotlin + coroutines
             implementation(libs.androidx.work.runtime.ktx)
             // optional - GCMNetworkManager support
