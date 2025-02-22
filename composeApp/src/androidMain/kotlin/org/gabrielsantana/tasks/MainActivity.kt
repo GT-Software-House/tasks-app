@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             supabaseClient.auth.awaitInitialization()
         }
         installSplashScreen().setKeepOnScreenCondition {
-            initializationJob.isCompleted
+            initializationJob.isActive
         }
         setContent {
             val appState = rememberAppState()
