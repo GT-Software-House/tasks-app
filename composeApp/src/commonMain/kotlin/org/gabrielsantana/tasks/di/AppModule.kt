@@ -26,7 +26,10 @@ val appModule = module {
     single { TasksRepository(get(), get(), get()) }
     single {
         createSupabaseClient(SUPABASE_URL,  SUPABASE_KEY) {
-            install(Auth)
+            install(Auth) {
+                //the navigation is controlled by session state and it's cleaned and reloaded on app callbacks, so we need to disable that 'optimization'
+                enableLifecycleCallbacks = false
+            }
             install(ComposeAuth) {
                 googleNativeLogin(SERVER_CLIENT_ID)
             }
