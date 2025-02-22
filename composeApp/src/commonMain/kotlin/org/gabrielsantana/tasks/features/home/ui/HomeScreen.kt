@@ -280,8 +280,8 @@ private fun NormalTopAppBar(
 ) {
     val syncingIcon = @Composable { CloudSyncingProgress() }
     val waitingIcon = @Composable { Icon(Icons.Default.CloudOff, contentDescription = "No Sync") }
-    val (icon, text) = when (uiState.syncStatus) {
-        QueueSyncStatus.Empty -> null to null
+    val pair = when (uiState.syncStatus) {
+        QueueSyncStatus.Empty -> null
         QueueSyncStatus.Syncing -> syncingIcon to "Data syncing in progress."
         QueueSyncStatus.Waiting -> waitingIcon to "There's no synced data.\nConnect to a network."
     }
@@ -290,19 +290,19 @@ private fun NormalTopAppBar(
         title = { Text("Your tasks") },
         scrollBehavior = scrollBehavior,
         actions = {
-            if (icon != null && text != null) {
+            if (pair != null) {
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
                     tooltip = {
                         RichTooltip(
                             title = { Text("Sync") }
                         ) {
-                            Text(text)
+                            Text(pair.second)
                         }
                     },
                     state = tooltipState
                 ) {
-                    IconButton(onClick = { scope.launch { tooltipState.show() } }, content = icon)
+                    IconButton(onClick = { scope.launch { tooltipState.show() } }, content = pair.first)
                 }
             }
             IconButton(onClick = onSettingsClick) {

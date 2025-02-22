@@ -151,7 +151,20 @@ android {
         getByName("release") {
             isMinifyEnabled = false
         }
+        getByName("debug") {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
+        }
     }
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("signing/debug.keystore")
+            storePassword = "Jv0ZP2okl9v6"
+            keyAlias = "debugkey"
+            keyPassword = "Jv0ZP2okl9v6"
+        }
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -159,6 +172,15 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+task("print") {
+    val password = System.getenv("DEBUG_KEY_PASSWORD")
+    val path = System.getenv("DEBUG_KEY_LOCATION")
+    doLast {
+        println("fdsfsdafsdafsad$password")
+        println("fdsfsdafsdafsad$path")
     }
 }
 
