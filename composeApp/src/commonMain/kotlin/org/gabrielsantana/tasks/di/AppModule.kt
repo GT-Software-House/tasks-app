@@ -7,6 +7,7 @@ import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.googleNativeLogin
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.realtime.Realtime
 import org.gabrielsantana.tasks.TasksDatabase
 import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.data.driver.DatabaseDriverFactory
@@ -23,7 +24,7 @@ val appModule = module {
     single { TasksLocalDataSource(get()) }
     single { TasksRemoteDataSource(get()) }
     includes(homeModule, createTaskModule, preferencesModule)
-    single { TasksRepository(get(), get(), get()) }
+    single { TasksRepository(get(), get(), get(), get()) }
     single {
         createSupabaseClient(SUPABASE_URL,  SUPABASE_KEY) {
             install(Auth) {
@@ -33,6 +34,7 @@ val appModule = module {
             install(ComposeAuth) {
                 googleNativeLogin(SERVER_CLIENT_ID)
             }
+            install(Realtime)
             install(Postgrest) {
                 defaultSchema = "public"
             }

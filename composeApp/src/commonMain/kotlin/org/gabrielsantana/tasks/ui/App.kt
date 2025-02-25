@@ -4,13 +4,19 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
+import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.tasks.features.home.ui.HomeScreen
 import org.gabrielsantana.tasks.features.login.ui.LoginScreen
@@ -18,6 +24,7 @@ import org.gabrielsantana.tasks.features.settings.SettingsScreen
 import org.gabrielsantana.tasks.features.settings.appearance.ui.AppearanceScreen
 import org.gabrielsantana.tasks.ui.theme.TasksTheme
 import org.koin.compose.getKoin
+import org.koin.compose.koinInject
 
 enum class RootScreens(val title: String) {
     Login("Login"),
@@ -31,6 +38,7 @@ enum class RootScreens(val title: String) {
 fun App(
     navController: NavHostController = rememberNavController(),
     appState: AppState = rememberAppState(getKoin().get()),
+    tasksRepository: TasksRepository = koinInject()
 ) {
     val darkTheme = appState.themeMode.collectAsStateWithLifecycle().value.isDarkMode
     val isAmoled by appState.isAmoled.collectAsStateWithLifecycle()
@@ -40,6 +48,12 @@ fun App(
     val isLoggedIn by appState.isLoggedIn.collectAsStateWithLifecycle()
     val startDestination = if (isLoggedIn) RootScreens.Home.name else RootScreens.Login.name
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            tasksRepository.listenRemoteChanges()
+        }
+    }
 
     TasksTheme(
         dynamicColorSeed = colorSeed,

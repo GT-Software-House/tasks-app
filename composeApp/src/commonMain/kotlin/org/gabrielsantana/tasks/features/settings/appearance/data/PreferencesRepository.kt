@@ -60,6 +60,14 @@ class PreferencesRepository(
     fun getSeedColor(): Flow<Int> {
         return flowSettings.getIntFlow(PreferencesKeys.SEED_COLOR, DefaultPreferences.SEED_COLOR)
     }
+
+    suspend fun getLastSync(): String? {
+        return flowSettings.getStringOrNull("last_sync")
+    }
+
+    suspend fun updateLastSync(lastSync: String) {
+        flowSettings.putString("last_sync", lastSync)
+    }
 }
 
 private object DefaultPreferences {

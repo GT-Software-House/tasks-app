@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.map
 import org.gabrielsantana.tasks.data.scheduler.QueueSyncStatus
 import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
 import org.gabrielsantana.tasks.data.worker.SyncTaskRemotelyWorker
+import org.gabrielsantana.tasks.data.worker.TaskDeleteSyncerWorker
 import org.gabrielsantana.tasks.data.worker.TaskUpdateSyncerWorker
 import java.util.concurrent.TimeUnit
 
@@ -35,6 +36,27 @@ class AndroidTaskSyncScheduler(
         val syncRequest = OneTimeWorkRequestBuilder<SyncTaskRemotelyWorker>()
             .setConstraints(constraints)
             .setInputData(data)
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setBackoffCriteria(
+                BackoffPolicy.EXPONENTIAL,
+                30,
+                TimeUnit.MILLISECONDS
+            )
+            .build()
+        workManager.enqueue(syncRequest)
+    }
+
+    override fun scheduleDelete(taskUuid: String) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        val data = Data.Builder()
+            .putString("taskUuid", taskUuid)
+            .build()
+        val syncRequest = OneTimeWorkRequestBuilder<TaskDeleteSyncerWorker>()
+            .setConstraints(constraints)
+            .setInputData(data)
+            .addTag(buildTag(taskUuid))
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,

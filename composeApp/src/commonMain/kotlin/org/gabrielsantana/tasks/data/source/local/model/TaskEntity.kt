@@ -13,9 +13,9 @@ fun TaskEntity.asTask(): Task = Task(
     title = title,
     description = description,
     isCompleted = isCompleted,
-    createdAt = Instant.fromEpochMilliseconds(createdAtTimestamp),
-    completedAt = completedAtTimestamp?.let { Instant.fromEpochMilliseconds(it) },
-    updatedAt = updatedAtTimestamp?.let { Instant.fromEpochMilliseconds(it) }
+    createdAt = Instant.parse(createdAtTimestamp),
+    completedAt = completedAtTimestamp?.let { Instant.parse(it) },
+    updatedAt = updatedAtTimestamp?.let { Instant.parse(it) }
 )
 
 fun TaskEntity.asRemoteTask() = RemoteTaskModel(

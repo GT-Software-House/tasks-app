@@ -24,7 +24,7 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
         title: String,
         description: String,
         isCompleted: Boolean,
-        createdAtTimestamp: Long = Clock.System.now().toEpochMilliseconds(),
+        createdAtTimestamp: String = Clock.System.now().toString(),
     ): TaskEntity {
         return queries.transactionWithResult {
             val uuid = Uuid.random().toString()

@@ -105,6 +105,9 @@ kotlin {
             implementation(libs.supabase.auth.kt)
             implementation(libs.supabase.compose.auth)
             implementation(libs.supabase.postgrest)
+            implementation(libs.supabase.realtime)
+
+            implementation(libs.kermit)
         }
         commonTest.dependencies {
             implementation(libs.mockk.common)

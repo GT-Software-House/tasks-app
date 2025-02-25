@@ -21,7 +21,7 @@ fun RemoteTaskModel.asTaskEntity() = TaskEntity(
     title = title,
     description = description,
     isCompleted = isCompleted,
-    completedAtTimestamp = completedAt?.toLong(),
-    createdAtTimestamp = createdAt.toLong(),
-    updatedAtTimestamp = updatedAt?.toLong()
+    completedAtTimestamp = completedAt,
+    createdAtTimestamp = createdAt,
+    updatedAtTimestamp = updatedAt
 )
