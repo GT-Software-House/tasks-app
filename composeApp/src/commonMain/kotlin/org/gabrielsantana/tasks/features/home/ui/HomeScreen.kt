@@ -10,8 +10,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +59,7 @@ import androidx.compose.material3.TooltipState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -104,7 +103,8 @@ fun HomeScreen(
         onClearSelection = viewModel::clearSelectedTasks,
         onDeleteClick = viewModel::deleteSelectedTasks,
         onSettingsClick = onNavigateToSettings,
-        onTaskClick = onNavigateToEditTask
+        onTaskClick = onNavigateToEditTask,
+        onRefresh = viewModel::refresh
     )
 }
 
@@ -120,7 +120,8 @@ fun HomeContent(
     onClearSelection: () -> Unit,
     onTaskClick: (String) -> Unit,
     onTaskCheckedChange: (newValue: Boolean, model: TaskUiModel) -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     val tooltipState = rememberTooltipState(isPersistent = true)
@@ -160,12 +161,16 @@ fun HomeContent(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
-        Box {
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = onRefresh,
+            modifier = Modifier.padding(paddingValues)
+        ) {
             LazyColumn(
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 100.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize().padding(paddingValues)
+                modifier = Modifier.fillMaxSize()
             ) {
                 item {
                     val options = TaskFilter.entries
@@ -428,7 +433,8 @@ private fun DefaultPreview() {
         onClearSelection = {},
         onDeleteClick = {},
         onSettingsClick = {},
-        onTaskClick = {}
+        onTaskClick = {},
+        onRefresh = {}
     )
 }
 
@@ -447,6 +453,7 @@ private fun EmptyTasksPreview() {
         onClearSelection = {},
         onDeleteClick = {},
         onSettingsClick = {},
+        onRefresh = {},
         onTaskClick = {}
     )
 }

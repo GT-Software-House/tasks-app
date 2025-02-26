@@ -2,6 +2,8 @@ package org.gabrielsantana.tasks.features.home.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +27,7 @@ class HomeViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        getTasksJob = viewModelScope.launch { loadTasks() }
+        loadTasks()
         //TODO: collect this in another place?
         viewModelScope.launch {
             scheduler.tasksWaitingSync().collect { syncStatus ->
@@ -61,6 +63,8 @@ class HomeViewModel(
         tasksRepository.deleteTask(task.uuid)
     }
 
+    //Used by iOS native UI
+    @Suppress("unused")
     fun searchTasks(query: String) {
         getTasksJob?.cancel()
         getTasksJob = viewModelScope.launch {
@@ -82,29 +86,23 @@ class HomeViewModel(
     }
 
     fun selectTaskFilter(newFilter: TaskFilter) {
-        getTasksJob?.cancel()
-        getTasksJob = viewModelScope.launch {
-            tasksRepository.getTasks().collect { tasks ->
-                _uiState.update { state ->
-                    state.copy(
-                        selectedTaskFilter = newFilter,
-                        tasks = tasks.filter { newFilter.predicate(it) }.map { it.toUiModel() })
-                }
-            }
-
+        _uiState.update { state ->
+            state.copy(selectedTaskFilter = newFilter)
         }
+        loadTasks()
     }
 
-    private suspend fun loadTasks() {
-        tasksRepository.getTasks().collect { value ->
-            _uiState.update { state ->
+    private fun loadTasks() {
+        getTasksJob?.cancel()
+        getTasksJob = viewModelScope.launch(Dispatchers.IO) {
+            tasksRepository.getTasks().collect { value ->
                 val newTasks = value
                     .filter {
                         _uiState.value.selectedTaskFilter.predicate(it)
                     }.map {
                         it.toUiModel()
                     }
-                state.copy(tasks = newTasks)
+                _uiState.update { it.copy(tasks = newTasks) }
             }
         }
     }
@@ -112,6 +110,14 @@ class HomeViewModel(
     fun updateTask(isChecked: Boolean, task: TaskUiModel) {
         viewModelScope.launch {
             tasksRepository.updateTask(task.uuid, isChecked)
+        }
+    }
+
+    fun refresh() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.update { it.copy(isRefreshing = true) }
+            tasksRepository.sync()
+            _uiState.update { it.copy(isRefreshing = false) }
         }
     }
 
