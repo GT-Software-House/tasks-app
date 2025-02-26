@@ -23,7 +23,6 @@ class TasksRepository(
     private val remoteDataSource: TasksRemoteDataSource,
     private val preferencesRepository: PreferencesRepository
 ) {
-
     companion object {
         private const val TAG = "TasksRepository"
     }
@@ -37,8 +36,17 @@ class TasksRepository(
         taskSyncScheduler.scheduleDelete(uuid)
     }
 
+    fun getTaskById(uuid: String): Task? = localDataSource.getById(uuid)?.asTask()
+
+
+
     fun updateTask(uuid: String, isChecked: Boolean) {
         localDataSource.updateIsChecked(uuid, isChecked)
+        taskSyncScheduler.scheduleTaskUpdate(uuid)
+    }
+
+    fun updateTaskTitleAndDescription(uuid: String, title: String, description: String) {
+        localDataSource.updateTitleAndDescription(uuid, title, description)
         taskSyncScheduler.scheduleTaskUpdate(uuid)
     }
 

@@ -57,7 +57,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,35 +77,26 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.random.Random
 
-
 @Composable
 fun HomeScreen(
-    //TODO improve task create
-    taskCreated: Boolean,
-    onTaskCreated: () -> Unit,
     onNavigateToCreateTask: () -> Unit,
+    onNavigateToEditTask: (taskUuid: String) -> Unit,
     onNavigateToSettings: () -> Unit,
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = koinViewModel(),
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val hostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(taskCreated) {
-        if (taskCreated) {
-            hostState.showSnackbar("Task created")
-            onTaskCreated()
-        }
-    }
     HomeContent(
         uiState = uiState,
-        hostState = hostState,
+        hostState = snackbarHostState,
         onCreateTaskClick = onNavigateToCreateTask,
         onTaskCheckedChange = viewModel::updateTask,
         onSelectTaskFilter = viewModel::selectTaskFilter,
         onSelectTaskIndex = viewModel::selectTask,
         onClearSelection = viewModel::clearSelectedTasks,
         onDeleteClick = viewModel::deleteSelectedTasks,
-        onSettingsClick = onNavigateToSettings
+        onSettingsClick = onNavigateToSettings,
+        onTaskClick = onNavigateToEditTask
     )
 }
 
@@ -120,6 +110,7 @@ fun HomeContent(
     onSettingsClick: () -> Unit,
     onSelectTaskIndex: (Int) -> Unit,
     onClearSelection: () -> Unit,
+    onTaskClick: (String) -> Unit,
     onTaskCheckedChange: (newValue: Boolean, model: TaskUiModel) -> Unit,
     onDeleteClick: () -> Unit
 ) {
@@ -205,7 +196,7 @@ fun HomeContent(
                                 if (uiState.isSelectionMode) {
                                     onSelectTaskIndex(taskIndex)
                                 } else {
-                                    //some event for click, like expand the cards
+                                    onTaskClick(task.uuid)
                                 }
                             }
                         ).fillMaxWidth(),
@@ -397,7 +388,8 @@ private fun DefaultPreview() {
         onSelectTaskIndex = {},
         onClearSelection = {},
         onDeleteClick = {},
-        onSettingsClick = {}
+        onSettingsClick = {},
+        onTaskClick = {}
     )
 }
 
@@ -411,8 +403,7 @@ private fun NormalTopAppBarOfflinePreview() {
                 uiState = HomeUiState(syncStatus = QueueSyncStatus.Waiting),
                 scope = rememberCoroutineScope(),
                 tooltipState = rememberTooltipState(true),
-                {}
-            )
+            ) {}
         }
     }
 }
@@ -427,8 +418,7 @@ private fun NormalTopAppBarTipOpenedPreview() {
                 uiState = HomeUiState(syncStatus = QueueSyncStatus.Syncing),
                 scope = rememberCoroutineScope(),
                 tooltipState = rememberTooltipState(true),
-                {}
-            )
+            ) {}
         }
     }
 }

@@ -67,6 +67,10 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
         queries.updateIsChecked(isCompleted = isChecked, uuid = uuid)
     }
 
+    fun updateTitleAndDescription(uuid: String, title: String, description: String) {
+        queries.updateTitleAndDescription(title = title, description = description, uuid = uuid)
+    }
+
     /**
      * Retrieves a TaskEntity from the database by its ID.
      *

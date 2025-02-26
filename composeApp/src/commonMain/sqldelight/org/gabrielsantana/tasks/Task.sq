@@ -36,3 +36,8 @@ updateIsChecked:
 UPDATE TaskEntity
 SET isCompleted = :isCompleted
 WHERE uuid IS :uuid;
+
+updateTitleAndDescription:
+UPDATE TaskEntity
+SET title = :title, description = :description
+WHERE uuid IS :uuid;

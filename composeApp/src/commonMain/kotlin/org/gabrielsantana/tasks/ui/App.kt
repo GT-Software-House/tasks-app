@@ -3,21 +3,25 @@ package org.gabrielsantana.tasks.ui
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
+import org.gabrielsantana.tasks.features.create.ui.TaskAction
 import org.gabrielsantana.tasks.features.home.ui.HomeScreen
 import org.gabrielsantana.tasks.features.login.ui.LoginScreen
 import org.gabrielsantana.tasks.features.settings.SettingsScreen
@@ -25,14 +29,6 @@ import org.gabrielsantana.tasks.features.settings.appearance.ui.AppearanceScreen
 import org.gabrielsantana.tasks.ui.theme.TasksTheme
 import org.koin.compose.getKoin
 import org.koin.compose.koinInject
-
-enum class RootScreens(val title: String) {
-    Login("Login"),
-    Home("Home"),
-    CreateTask("Create task"),
-    Settings("Settings"),
-    Appearance("Apperance");
-}
 
 @Composable
 fun App(
@@ -44,9 +40,8 @@ fun App(
     val isAmoled by appState.isAmoled.collectAsStateWithLifecycle()
     val colorSeed by appState.seedColor.collectAsStateWithLifecycle()
     val isDynamicColorEnabled by appState.isDynamicColorEnabled.collectAsStateWithLifecycle()
-
     val isLoggedIn by appState.isLoggedIn.collectAsStateWithLifecycle()
-    val startDestination = if (isLoggedIn) RootScreens.Home.name else RootScreens.Login.name
+    val startDestination = if (isLoggedIn) AppScreens.Home else AppScreens.Login
 
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner) {
@@ -62,59 +57,64 @@ fun App(
         isAmoled = isAmoled,
     ) {
         val graph = navController.createGraph(startDestination = startDestination) {
-            composable(RootScreens.Login.name) {
+            composable<AppScreens.Login> {
                 LoginScreen()
             }
-            composable(RootScreens.Home.name) { entry ->
-                val taskCreated =
-                    entry.savedStateHandle.get<Boolean>("taskCreatedSuccessfully") == true
+            composable<AppScreens.Home> { entry ->
+                val taskActionDone = entry.savedStateHandle.get<String>("taskAction")?.let {
+                    Json.decodeFromString<TaskAction>(it)
+                }
+                val snackbarHostState = remember { SnackbarHostState() }
+                LaunchedEffect(taskActionDone) {
+                    if (taskActionDone != null) {
+                        when (taskActionDone) {
+                            TaskAction.Create -> snackbarHostState.showSnackbar("Task created")
+                            is TaskAction.Update -> snackbarHostState.showSnackbar("Task updated")
+                        }
+                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                            "taskAction",
+                            null
+                        )
+                    }
+                }
                 HomeScreen(
                     onNavigateToCreateTask = {
-                        navController.navigate(RootScreens.CreateTask.name)
-                    },
-                    taskCreated = taskCreated,
-                    onTaskCreated = {
-                        navController.currentBackStackEntry?.savedStateHandle?.set(
-                            "taskCreatedSuccessfully",
-                            false
-                        )
+                        navController.navigate(AppScreens.CreateTask())
                     },
                     onNavigateToSettings = {
-                        navController.navigate(RootScreens.Settings.name)
-                    }
+                        navController.navigate(AppScreens.Settings)
+                    },
+                    onNavigateToEditTask = {
+                        navController.navigate(AppScreens.CreateTask(it))
+                    },
+                    snackbarHostState = snackbarHostState
                 )
             }
-            composable(RootScreens.CreateTask.name) {
+            composable<AppScreens.CreateTask> {
                 CreateTaskScreen(
-                    onNavigateBack = {
-                        if (navController.currentBackStackEntry?.destination?.route == RootScreens.CreateTask.name) {
-                            navController.popBackStack()
-                            if (it) navController.currentBackStackEntry?.savedStateHandle?.set(
-                                "taskCreatedSuccessfully",
-                                true
-                            )
-                        }
+                    onNavigateBack = { action: TaskAction? ->
+                        navController.popBackStack()
+                        if (action != null) navController.currentBackStackEntry?.savedStateHandle?.set(
+                            "taskAction",
+                            Json.encodeToString(action)
+                        )
                     },
                 )
             }
-            composable(RootScreens.Settings.name) {
+            composable<AppScreens.Settings> {
                 SettingsScreen(
                     onNavigateToAppearance = {
-                        navController.navigate(RootScreens.Appearance.name)
+                        navController.navigate(AppScreens.Appearance)
                     },
                     onNavigateBack = {
-                        if (navController.currentBackStackEntry?.destination?.route == RootScreens.Settings.name) {
-                            navController.popBackStack()
-                        }
+                        navController.popBackStack()
                     }
                 )
             }
-            composable(RootScreens.Appearance.name) {
+            composable<AppScreens.Appearance> {
                 AppearanceScreen(
                     onNavigateBack = {
-                        if (navController.currentBackStackEntry?.destination?.route == RootScreens.Appearance.name) {
-                            navController.popBackStack()
-                        }
+                        navController.popBackStack()
                     }
                 )
             }
