@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import org.gabrielsantana.tasks.TaskEntity
 
 @Serializable
-data class RemoteTaskModel(
+data class TaskNetworkModel(
     val uuid: String,
     val deviceId: String,
     val title: String,
@@ -15,7 +15,7 @@ data class RemoteTaskModel(
     val updatedAt: String?
 )
 
-fun RemoteTaskModel.asTaskEntity() = TaskEntity(
+fun TaskNetworkModel.asTaskEntity() = TaskEntity(
     uuid = uuid,
     deviceId = deviceId,
     title = title,

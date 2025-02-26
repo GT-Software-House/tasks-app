@@ -12,7 +12,7 @@ import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.selectAsFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
-import org.gabrielsantana.tasks.data.source.remote.model.RemoteTaskModel
+import org.gabrielsantana.tasks.data.source.remote.model.TaskNetworkModel
 import org.gabrielsantana.tasks.data.source.remote.model.TaskTransaction
 
 class TasksRemoteDataSource(
@@ -32,7 +32,7 @@ class TasksRemoteDataSource(
         isCompleted: Boolean,
         createdAtTimestamp: String = Clock.System.now().toString(),
     ) {
-        val task = RemoteTaskModel(
+        val task = TaskNetworkModel(
             uuid = uuid,
             deviceId = deviceId,
             title = title,
@@ -46,7 +46,7 @@ class TasksRemoteDataSource(
     }
 
     suspend fun upsert(
-        task: RemoteTaskModel,
+        task: TaskNetworkModel,
     ): Boolean {
         val count = supabaseClient.from(TABLE_NAME_TASKS).upsert(task) {
             count(Count.EXACT)
@@ -54,14 +54,14 @@ class TasksRemoteDataSource(
         return count > 0L
     }
 
-    suspend fun getAll(): List<RemoteTaskModel> {
+    suspend fun getAll(): List<TaskNetworkModel> {
         return supabaseClient.from(TABLE_NAME_TASKS).select().decodeList()
     }
 
-    suspend fun getByIds(uuids: List<String>): List<RemoteTaskModel> {
+    suspend fun getByIds(uuids: List<String>): List<TaskNetworkModel> {
         return supabaseClient.from(TABLE_NAME_TASKS).select() {
             filter {
-                RemoteTaskModel::uuid isIn uuids
+                TaskNetworkModel::uuid isIn uuids
             }
         }.decodeList()
     }
@@ -79,7 +79,7 @@ class TasksRemoteDataSource(
         val result = supabaseClient.from(TABLE_NAME_TASKS).delete {
             count(Count.EXACT)
             filter {
-                RemoteTaskModel::uuid eq uuid
+                TaskNetworkModel::uuid eq uuid
             }
         }.countOrNull() ?: 0
         return result > 0L
