@@ -16,10 +16,17 @@ class TasksRepository(
 ) {
     fun getTasks(): Flow<List<Task>> = localDataSource.getAll().map { it.map { entity -> entity.asTask() } }
 
+    fun getTaskById(uuid: String): Task? = localDataSource.getById(uuid)?.asTask()
+
     fun deleteTask(uuid: String) = localDataSource.delete(uuid)
 
     fun updateTask(uuid: String, isChecked: Boolean) {
         localDataSource.updateIsChecked(uuid, isChecked)
+        taskSyncScheduler.scheduleTaskUpdate(uuid)
+    }
+
+    fun updateTaskTitleAndDescription(uuid: String, title: String, description: String) {
+        localDataSource.updateTitleAndDescription(uuid, title, description)
         taskSyncScheduler.scheduleTaskUpdate(uuid)
     }
 
