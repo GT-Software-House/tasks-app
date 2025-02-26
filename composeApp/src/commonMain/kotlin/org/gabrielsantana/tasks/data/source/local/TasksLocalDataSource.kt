@@ -4,6 +4,7 @@ package org.gabrielsantana.tasks.data.source.local
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -59,8 +60,8 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
 
     fun getAll(): Flow<List<TaskEntity>> = queries.getAll().asFlow().mapToList(Dispatchers.IO)
 
-    fun delete(uuid: String) {
-        queries.delete(uuid = uuid)
+    fun deleteById(uuid: String) {
+        queries.deleteById(uuid = uuid)
     }
 
     fun updateIsChecked(uuid: String, isChecked: Boolean) {
@@ -83,6 +84,21 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
         } catch (_: NullPointerException) {
             null
         }
+    }
+
+
+    /**
+     * Retrieves a TaskEntity from the database by its ID.
+     *
+     * @param id The unique identifier of the TaskEntity to retrieve.
+     * @return The TaskEntity with the specified ID, or null if no such entity exists.
+     */
+    fun getByIdAsFlow(uuid: String): Flow<TaskEntity?> {
+        return queries.getById(uuid = uuid).asFlow().mapToOne(Dispatchers.IO)
+    }
+
+    fun deleteAll() {
+        queries.deleteAll()
     }
 
 }

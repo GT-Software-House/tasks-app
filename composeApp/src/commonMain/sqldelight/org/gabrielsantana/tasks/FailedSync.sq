@@ -1,0 +1,19 @@
+CREATE TABLE IF NOT EXISTS FailedSyncEntity(
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    taskId TEXT NOT NULL,
+    timestamp TEXT NOT NULL
+);
+
+getAll:
+SELECT * FROM FailedSyncEntity;
+
+insert:
+INSERT INTO FailedSyncEntity(id, taskId, timestamp)
+VALUES(?, ?, ?);
+
+deleteById:
+DELETE FROM FailedSyncEntity
+WHERE id IS :id;
+
+deleteAll:
+DELETE FROM FailedSyncEntity;

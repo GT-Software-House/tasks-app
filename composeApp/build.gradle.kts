@@ -108,6 +108,7 @@ kotlin {
             implementation(libs.supabase.realtime)
 
             implementation(libs.kermit)
+            implementation(libs.store)
         }
         commonTest.dependencies {
             implementation(libs.mockk.common)

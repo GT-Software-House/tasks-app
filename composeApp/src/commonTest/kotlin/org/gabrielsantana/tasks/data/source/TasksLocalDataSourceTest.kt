@@ -57,7 +57,7 @@ class TasksLocalDataSourceTest {
         val id = 123L
 
         // Act
-        dataSource.delete(id)
+        dataSource.deleteById(id)
 
         // Assert
         verify { databaseMock.taskQueries.delete(id = id) }

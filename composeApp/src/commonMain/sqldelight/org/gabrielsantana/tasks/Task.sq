@@ -28,9 +28,12 @@ SELECT * FROM TaskEntity;
 -- SET name = :name
 -- WHERE id IS :id;
 
-delete:
+deleteById:
 DELETE FROM TaskEntity
 WHERE uuid IS :uuid;
+
+deleteAll:
+DELETE FROM TaskEntity;
 
 updateIsChecked:
 UPDATE TaskEntity

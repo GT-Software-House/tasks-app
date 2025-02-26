@@ -10,9 +10,9 @@ data class TaskNetworkModel(
     val title: String,
     val description: String,
     val isCompleted: Boolean,
-    val completedAt: String?,
-    val createdAt: String,
-    val updatedAt: String?
+    val completedAtTimestamp: String?,
+    val createdAtTimestamp: String,
+    val updatedAtTimestamp: String?
 )
 
 fun TaskNetworkModel.asTaskEntity() = TaskEntity(
@@ -21,7 +21,7 @@ fun TaskNetworkModel.asTaskEntity() = TaskEntity(
     title = title,
     description = description,
     isCompleted = isCompleted,
-    completedAtTimestamp = completedAt,
-    createdAtTimestamp = createdAt,
-    updatedAtTimestamp = updatedAt
+    completedAtTimestamp = completedAtTimestamp,
+    createdAtTimestamp = createdAtTimestamp,
+    updatedAtTimestamp = updatedAtTimestamp
 )

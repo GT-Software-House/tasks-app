@@ -52,6 +52,7 @@ gitliveFirebase = "2.1.0"
 ktor = "3.0.3"
 connectivity = "1.2.0"
 workRuntimeKtx = "2.10.0"
+store = "5.0.0"
 
 [libraries]
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -107,6 +108,7 @@ androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+store = { module = "org.mobilenativefoundation.store:store5", version.ref = "store" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

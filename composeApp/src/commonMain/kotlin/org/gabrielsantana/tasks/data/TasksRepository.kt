@@ -2,10 +2,9 @@ package org.gabrielsantana.tasks.data
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.takeWhile
 import kotlinx.datetime.Clock
+import org.gabrielsantana.tasks.TaskStore
 import org.gabrielsantana.tasks.data.model.Task
 import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
 import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
@@ -16,29 +15,29 @@ import org.gabrielsantana.tasks.data.source.remote.model.Operation
 import org.gabrielsantana.tasks.data.source.remote.model.TaskTransaction
 import org.gabrielsantana.tasks.features.settings.appearance.data.PreferencesRepository
 import org.gabrielsantana.tasks.data.source.remote.model.asTaskEntity
+import org.mobilenativefoundation.store.store5.StoreReadRequest
 
 class TasksRepository(
     private val taskSyncScheduler: TaskSyncScheduler,
     private val localDataSource: TasksLocalDataSource,
     private val remoteDataSource: TasksRemoteDataSource,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val taskStore: TaskStore,
 ) {
     companion object {
         private const val TAG = "TasksRepository"
     }
 
-    fun getTasks(): Flow<List<Task>> = localDataSource.getAll().map {
-        it.map { entity -> entity.asTask() }.sortedBy { it.createdAt.epochSeconds }
+    fun getTasks(): Flow<List<Task>> {
+
     }
 
     fun deleteTask(uuid: String) {
-        localDataSource.delete(uuid)
+        localDataSource.deleteById(uuid)
         taskSyncScheduler.scheduleDelete(uuid)
     }
 
     fun getTaskById(uuid: String): Task? = localDataSource.getById(uuid)?.asTask()
-
-
 
     fun updateTask(uuid: String, isChecked: Boolean) {
         localDataSource.updateIsChecked(uuid, isChecked)
@@ -92,7 +91,7 @@ class TasksRepository(
 
     private suspend fun deleteLocalTasks(taskUuids: List<TaskTransaction>) {
         taskUuids.forEach {
-            localDataSource.delete(it.taskUuid)
+            localDataSource.deleteById(it.taskUuid)
         }
     }
 
