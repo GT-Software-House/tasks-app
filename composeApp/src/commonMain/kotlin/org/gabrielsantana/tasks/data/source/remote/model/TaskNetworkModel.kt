@@ -1,21 +1,30 @@
 package org.gabrielsantana.tasks.data.source.remote.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.gabrielsantana.tasks.TaskEntity
 
 @Serializable
-data class RemoteTaskModel(
+data class TaskNetworkModel(
+    @SerialName("uuid")
     val uuid: String,
+    @SerialName("device_id")
     val deviceId: String,
+    @SerialName("title")
     val title: String,
+    @SerialName("description")
     val description: String,
+    @SerialName("is_completed")
     val isCompleted: Boolean,
+    @SerialName("completed_at")
     val completedAt: String?,
+    @SerialName("created_at")
     val createdAt: String,
-    val updatedAt: String?
+    @SerialName("updated_at")
+    val updatedAt: String
 )
 
-fun RemoteTaskModel.asTaskEntity() = TaskEntity(
+fun TaskNetworkModel.asTaskEntity() = TaskEntity(
     uuid = uuid,
     deviceId = deviceId,
     title = title,

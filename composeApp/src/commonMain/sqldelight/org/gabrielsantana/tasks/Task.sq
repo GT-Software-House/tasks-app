@@ -6,16 +6,13 @@ CREATE TABLE IF NOT EXISTS TaskEntity (
     isCompleted INTEGER AS kotlin.Boolean NOT NULL,
     completedAtTimestamp TEXT,
     createdAtTimestamp TEXT NOT NULL,
-    updatedAtTimestamp TEXT,
+    updatedAtTimestamp TEXT NOT NULL,
     PRIMARY KEY(uuid , deviceId)
 );
 
 insert:
 INSERT OR REPLACE INTO TaskEntity(uuid, deviceId, title, description, isCompleted, completedAtTimestamp, createdAtTimestamp, updatedAtTimestamp)
 VALUES(?,?,?,?, ?, ?, ?, ?);
-
-selectLastInsertRowId:
-SELECT last_insert_rowid();
 
 getById:
 SELECT * FROM TaskEntity WHERE uuid IS :uuid;

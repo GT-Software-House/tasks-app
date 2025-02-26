@@ -36,7 +36,7 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
                 isCompleted = isCompleted,
                 createdAtTimestamp = createdAtTimestamp,
                 completedAtTimestamp = null,
-                updatedAtTimestamp = null,
+                updatedAtTimestamp = createdAtTimestamp,
             )
             db.taskQueries.getById(uuid = uuid).executeAsOne()
         }

@@ -2,14 +2,12 @@ package org.gabrielsantana.tasks.data
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.takeWhile
 import kotlinx.datetime.Clock
 import org.gabrielsantana.tasks.data.model.Task
 import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
 import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
-import org.gabrielsantana.tasks.data.source.local.model.asRemoteTask
+import org.gabrielsantana.tasks.data.source.local.model.asNetworkModel
 import org.gabrielsantana.tasks.data.source.local.model.asTask
 import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
 import org.gabrielsantana.tasks.data.source.remote.model.Operation
@@ -38,8 +36,6 @@ class TasksRepository(
 
     fun getTaskById(uuid: String): Task? = localDataSource.getById(uuid)?.asTask()
 
-
-
     fun updateTask(uuid: String, isChecked: Boolean) {
         localDataSource.updateIsChecked(uuid, isChecked)
         taskSyncScheduler.scheduleTaskUpdate(uuid)
@@ -61,7 +57,7 @@ class TasksRepository(
     suspend fun syncRemoteWithLocal(taskUuid: String): Boolean {
         //here we can have a problem on finding the task or the task just has been deleted. How to diff the cases?
         val task = localDataSource.getById(taskUuid) ?: return true
-        return remoteDataSource.upsert(task.asRemoteTask())
+        return remoteDataSource.upsert(task.asNetworkModel())
     }
 
     suspend fun sync() {

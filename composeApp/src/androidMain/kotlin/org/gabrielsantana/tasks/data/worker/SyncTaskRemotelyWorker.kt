@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
+import org.gabrielsantana.tasks.data.source.local.model.asNetworkModel
 import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
 
 class SyncTaskRemotelyWorker(
@@ -24,14 +25,7 @@ class SyncTaskRemotelyWorker(
                 val task = tasksLocalDataSource.getById(taskId) ?: return Result.success()
                 //need to load the session manually because it's cleaned on app close
                 supabaseClient.auth.loadFromStorage()
-                tasksRemoteDataSource.insert(
-                    uuid = task.uuid,
-                    deviceId = task.deviceId,
-                    title = task.title,
-                    description = task.description,
-                    isCompleted = task.isCompleted,
-                    createdAtTimestamp = task.createdAtTimestamp,
-                )
+                tasksRemoteDataSource.insert(task.asNetworkModel())
                 return Result.success()
             } catch (e: Exception) {
                 Log.e(TAG, "doWork failed at attempt $runAttemptCount}", e)
