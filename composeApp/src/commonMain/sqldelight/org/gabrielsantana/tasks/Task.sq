@@ -31,7 +31,7 @@ WHERE uuid IS :uuid;
 
 updateIsChecked:
 UPDATE TaskEntity
-SET isCompleted = :isCompleted
+SET isCompleted = :isCompleted, completedAtTimestamp = :completedAtTimestamp
 WHERE uuid IS :uuid;
 
 updateTitleAndDescription:

@@ -51,7 +51,7 @@ class TasksRemoteDataSource(
             filter {
                 timestamp?.let { gt("created_at", it) }
             }
-            order("created_at", order = Order.DESCENDING)
+            order("created_at", order = Order.ASCENDING)
         }.decodeList<TaskTransaction>()
     }
 

@@ -64,7 +64,11 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
     }
 
     fun updateIsChecked(uuid: String, isChecked: Boolean) {
-        queries.updateIsChecked(isCompleted = isChecked, uuid = uuid)
+        queries.updateIsChecked(
+            isCompleted = isChecked,
+            uuid = uuid,
+            completedAtTimestamp = if (isChecked) Clock.System.now().toString() else null
+        )
     }
 
     fun updateTitleAndDescription(uuid: String, title: String, description: String) {

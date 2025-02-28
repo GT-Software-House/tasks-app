@@ -9,6 +9,8 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
 import org.gabrielsantana.tasks.TasksDatabase
+import org.gabrielsantana.tasks.data.Syncer
+import org.gabrielsantana.tasks.data.TaskSyncer
 import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.data.driver.DatabaseDriverFactory
 import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
@@ -21,10 +23,11 @@ import org.koin.dsl.module
 val appModule = module {
     //TODO: many 'singles', improve this
     single { TasksDatabase(get<DatabaseDriverFactory>().createDriver()) }
+    factory<TaskSyncer> { TaskSyncer(get(), get(), get()) }
     single { TasksLocalDataSource(get()) }
     single { TasksRemoteDataSource(get()) }
     includes(homeModule, createTaskModule, preferencesModule)
-    single { TasksRepository(get(), get(), get(), get()) }
+    single { TasksRepository(get(), get(), get()) }
     single {
         createSupabaseClient(SUPABASE_URL,  SUPABASE_KEY) {
             install(Auth) {

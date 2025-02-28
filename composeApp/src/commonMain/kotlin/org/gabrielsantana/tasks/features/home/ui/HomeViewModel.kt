@@ -116,7 +116,7 @@ class HomeViewModel(
     fun refresh() {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.update { it.copy(isRefreshing = true) }
-            tasksRepository.sync()
+            tasksRepository.oneTimeSync()
             _uiState.update { it.copy(isRefreshing = false) }
         }
     }

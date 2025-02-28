@@ -15,7 +15,7 @@ class AppStartupSync : Initializer<Unit>, KoinComponent {
 
     override fun create(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
-            repository.sync()
+            repository.oneTimeSync()
         }
     }
 

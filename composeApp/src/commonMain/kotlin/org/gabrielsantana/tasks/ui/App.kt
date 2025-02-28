@@ -46,7 +46,7 @@ fun App(
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            tasksRepository.listenRemoteChanges()
+            tasksRepository.reactiveSync()
         }
     }
 
