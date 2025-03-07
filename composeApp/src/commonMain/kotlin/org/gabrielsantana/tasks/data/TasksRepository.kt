@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.map
 import org.gabrielsantana.tasks.data.model.Task
 import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
 import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
-import org.gabrielsantana.tasks.data.source.local.model.asRemoteTask
 import org.gabrielsantana.tasks.data.source.local.model.asTask
 import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
 
@@ -27,14 +26,4 @@ class TasksRepository(
         val newTask = localDataSource.insert(title, description, isCompleted)
         taskSyncScheduler.scheduleTask(taskUuid = newTask.uuid)
     }
-
-    /**
-     * @return if the data was synced successfully
-     */
-    suspend fun syncRemoteWithLocal(taskUuid: String): Boolean {
-        //here we can have a problem on finding the task or the task just has been deleted. How to diff the cases?
-        val task = localDataSource.getById(taskUuid) ?: return true
-        return remoteDataSource.upsert(task.asRemoteTask())
-    }
-
 }
