@@ -10,5 +10,5 @@ data class Task(
     val isCompleted: Boolean,
     val createdAt: Instant,
     val completedAt: Instant?,
-    val updatedAt: Instant?
+    val updatedAt: Instant
 )

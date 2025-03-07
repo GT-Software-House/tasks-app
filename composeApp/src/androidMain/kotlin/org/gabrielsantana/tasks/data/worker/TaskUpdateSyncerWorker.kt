@@ -20,7 +20,7 @@ class TaskUpdateSyncerWorker(
             try {
                 //need to load the session manually because it's cleaned on app close
                 supabaseClient.auth.loadFromStorage()
-                val syncedSuccessfully = tasksRepository.syncRemoteWithLocal(taskUuid)
+                val syncedSuccessfully = tasksRepository.syncToRemote(taskUuid)
                 if (!syncedSuccessfully) return Result.failure()
                 return Result.success()
             } catch (e: Exception) {

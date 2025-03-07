@@ -8,19 +8,32 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import kotlinx.coroutines.launch
 import org.gabrielsantana.tasks.ui.App
 import org.gabrielsantana.tasks.ui.isDarkMode
 import org.gabrielsantana.tasks.ui.rememberAppState
+import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
+
+    private val supabaseClient: SupabaseClient by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val initializationJob = lifecycleScope.launch {
+            supabaseClient.auth.awaitInitialization()
+        }
+        installSplashScreen().setKeepOnScreenCondition {
+            initializationJob.isActive
+        }
         setContent {
             val appState = rememberAppState()
-
             val darkTheme = appState.themeMode.collectAsStateWithLifecycle().value.isDarkMode
             LaunchedEffect(darkTheme) {
                 enableEdgeToEdge(

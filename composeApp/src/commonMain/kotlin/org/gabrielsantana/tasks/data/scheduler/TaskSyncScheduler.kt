@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TaskSyncScheduler {
     fun scheduleTask(taskUuid: String)
+    fun scheduleDelete(taskUuid: String)
     fun scheduleTaskUpdate(taskUuid: String)
 
     //TODO: improve name

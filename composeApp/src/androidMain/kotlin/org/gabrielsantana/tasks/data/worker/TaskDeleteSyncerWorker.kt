@@ -6,26 +6,23 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
-import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
-import org.gabrielsantana.tasks.data.source.local.model.asNetworkModel
+import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
 
-class SyncTaskRemotelyWorker(
+class TaskDeleteSyncerWorker(
     private val supabaseClient: SupabaseClient,
     private val tasksRemoteDataSource: TasksRemoteDataSource,
-    private val tasksLocalDataSource: TasksLocalDataSource,
     appContext: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
-        val taskId = inputData.getString("taskUuid")
-        if (taskId != null) {
+        val taskUuid = inputData.getString("taskUuid")
+        if (taskUuid != null) {
             try {
-                //here we can have a problem on finding the task or the task just has been deleted. How to diff the cases?
-                val task = tasksLocalDataSource.getById(taskId) ?: return Result.success()
                 //need to load the session manually because it's cleaned on app close
                 supabaseClient.auth.loadFromStorage()
-                tasksRemoteDataSource.insert(task.asNetworkModel())
+                val syncedSuccessfully = tasksRemoteDataSource.deleteById(uuid = taskUuid)
+                if (!syncedSuccessfully) return Result.failure()
                 return Result.success()
             } catch (e: Exception) {
                 Log.e(TAG, "doWork failed at attempt $runAttemptCount}", e)
@@ -41,4 +38,4 @@ class SyncTaskRemotelyWorker(
     }
 }
 
-private const val TAG = "SyncTaskRemotelyWorker"
+private const val TAG = "TaskDeleteSyncerWorker"

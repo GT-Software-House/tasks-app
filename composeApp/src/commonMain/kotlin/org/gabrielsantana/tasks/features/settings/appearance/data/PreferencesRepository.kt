@@ -8,11 +8,12 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.gabrielsantana.tasks.data.SyncerPreferences
 import org.gabrielsantana.tasks.ui.ThemeMode
 
 class PreferencesRepository(
     private val flowSettings: FlowSettings,
-) {
+) : SyncerPreferences {
 
     @OptIn(ExperimentalSettingsApi::class)
     fun getThemeMode(): Flow<ThemeMode> {
@@ -60,7 +61,21 @@ class PreferencesRepository(
     fun getSeedColor(): Flow<Int> {
         return flowSettings.getIntFlow(PreferencesKeys.SEED_COLOR, DefaultPreferences.SEED_COLOR)
     }
+
+    override suspend fun getLastSync(): String? {
+        return flowSettings.getStringOrNull("last_sync")
+    }
+
+    override fun getLastSyncFlow(): Flow<String?> {
+        return flowSettings.getStringOrNullFlow("last_sync")
+    }
+
+    override suspend fun updateLastSync(lastSync: String) {
+        flowSettings.putString("last_sync", lastSync)
+    }
 }
+
+interface Sync
 
 private object DefaultPreferences {
     const val THEME_MODE = 2

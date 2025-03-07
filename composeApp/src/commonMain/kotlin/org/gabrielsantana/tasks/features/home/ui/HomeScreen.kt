@@ -13,13 +13,16 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,6 +33,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.SentimentDissatisfied
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -55,9 +59,9 @@ import androidx.compose.material3.TooltipState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,6 +71,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -74,39 +79,32 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gabrielsantana.tasks.data.scheduler.QueueSyncStatus
 import org.gabrielsantana.tasks.features.settings.TaskFilter
+import org.gabrielsantana.tasks.ui.components.material.VerticalSpacer
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.random.Random
 
-
 @Composable
 fun HomeScreen(
-    //TODO improve task create
-    taskCreated: Boolean,
-    onTaskCreated: () -> Unit,
     onNavigateToCreateTask: () -> Unit,
+    onNavigateToEditTask: (taskUuid: String) -> Unit,
     onNavigateToSettings: () -> Unit,
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = koinViewModel(),
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val hostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(taskCreated) {
-        if (taskCreated) {
-            hostState.showSnackbar("Task created")
-            onTaskCreated()
-        }
-    }
     HomeContent(
         uiState = uiState,
-        hostState = hostState,
+        hostState = snackbarHostState,
         onCreateTaskClick = onNavigateToCreateTask,
         onTaskCheckedChange = viewModel::updateTask,
         onSelectTaskFilter = viewModel::selectTaskFilter,
         onSelectTaskIndex = viewModel::selectTask,
         onClearSelection = viewModel::clearSelectedTasks,
         onDeleteClick = viewModel::deleteSelectedTasks,
-        onSettingsClick = onNavigateToSettings
+        onSettingsClick = onNavigateToSettings,
+        onTaskClick = onNavigateToEditTask,
+        onRefresh = viewModel::refresh
     )
 }
 
@@ -120,8 +118,10 @@ fun HomeContent(
     onSettingsClick: () -> Unit,
     onSelectTaskIndex: (Int) -> Unit,
     onClearSelection: () -> Unit,
+    onTaskClick: (String) -> Unit,
     onTaskCheckedChange: (newValue: Boolean, model: TaskUiModel) -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     val tooltipState = rememberTooltipState(isPersistent = true)
@@ -161,57 +161,89 @@ fun HomeContent(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
-        LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 100.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = onRefresh,
             modifier = Modifier.padding(paddingValues)
         ) {
-            item {
-                val options = TaskFilter.entries
-                SingleChoiceSegmentedButtonRow(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    options.forEachIndexed { index, filter ->
-                        SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(index, count = options.size),
-                            onClick = { onSelectTaskFilter(filter) },
-                            selected = filter == uiState.selectedTaskFilter
-                        ) {
-                            Text(filter.label)
+            LazyColumn(
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 100.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item {
+                    val options = TaskFilter.entries
+                    SingleChoiceSegmentedButtonRow(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        options.forEachIndexed { index, filter ->
+                            SegmentedButton(
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index,
+                                    count = options.size
+                                ),
+                                onClick = { onSelectTaskFilter(filter) },
+                                selected = filter == uiState.selectedTaskFilter
+                            ) {
+                                Text(filter.label)
+                            }
                         }
                     }
+                    Spacer(Modifier.height(4.dp))
                 }
-                Spacer(Modifier.height(4.dp))
+                items(uiState.tasks, key = { task -> task.uuid }) { task ->
+                    val taskIndex = uiState.tasks.indexOf(task)
+                    TaskItem(
+                        title = task.title,
+                        description = task.description,
+                        isChecked = task.isChecked,
+                        isCheckable = !uiState.isSelectionMode,
+                        onCheckedChange = { onTaskCheckedChange(it, task) },
+                        isSelected = uiState.selectedTasksIndex.contains(uiState.tasks.indexOf(task)),
+                        modifier = Modifier
+                            .animateItem()
+                            .clip(CardDefaults.shape)
+                            .combinedClickable(
+                                onLongClick = {
+                                    if (!uiState.isSelectionMode) {
+                                        onSelectTaskIndex(taskIndex)
+                                    }
+                                },
+                                onClick = {
+                                    if (uiState.isSelectionMode) {
+                                        onSelectTaskIndex(taskIndex)
+                                    } else {
+                                        onTaskClick(task.uuid)
+                                    }
+                                }
+                            ).fillMaxWidth(),
+                    )
+                }
             }
-            items(uiState.tasks, key = { task -> task.uuid }) { task ->
-                val taskIndex = uiState.tasks.indexOf(task)
-                TaskItem(
-                    title = task.title,
-                    description = task.description,
-                    isChecked = task.isChecked,
-                    isCheckable = !uiState.isSelectionMode,
-                    onCheckedChange = { onTaskCheckedChange(it, task) },
-                    isSelected = uiState.selectedTasksIndex.contains(uiState.tasks.indexOf(task)),
-                    modifier = Modifier
-                        .animateItem()
-                        .clip(CardDefaults.shape)
-                        .combinedClickable(
-                            onLongClick = {
-                                if (!uiState.isSelectionMode) {
-                                    onSelectTaskIndex(taskIndex)
-                                }
-                            },
-                            onClick = {
-                                if (uiState.isSelectionMode) {
-                                    onSelectTaskIndex(taskIndex)
-                                } else {
-                                    //some event for click, like expand the cards
-                                }
-                            }
-                        ).fillMaxWidth(),
-                )
+            if (uiState.tasks.isEmpty()) {
+                EmptyTaskListWarning(Modifier.align(Alignment.Center))
             }
         }
+    }
+}
+
+@Composable
+fun EmptyTaskListWarning(modifier: Modifier = Modifier) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Icon(
+            Icons.Default.SentimentDissatisfied,
+            contentDescription = null,
+            modifier = Modifier.size(48.dp),
+        )
+        VerticalSpacer(8.dp)
+        Text(
+            "Looks like there's no tasks yet.",
+            style = MaterialTheme.typography.titleMedium,
+        )
     }
 }
 
@@ -302,7 +334,10 @@ private fun NormalTopAppBar(
                     },
                     state = tooltipState
                 ) {
-                    IconButton(onClick = { scope.launch { tooltipState.show() } }, content = pair.first)
+                    IconButton(
+                        onClick = { scope.launch { tooltipState.show() } },
+                        content = pair.first
+                    )
                 }
             }
             IconButton(onClick = onSettingsClick) {
@@ -397,9 +432,32 @@ private fun DefaultPreview() {
         onSelectTaskIndex = {},
         onClearSelection = {},
         onDeleteClick = {},
-        onSettingsClick = {}
+        onSettingsClick = {},
+        onTaskClick = {},
+        onRefresh = {}
     )
 }
+
+@Preview
+@Composable
+private fun EmptyTasksPreview() {
+    HomeContent(
+        uiState = HomeUiState(
+            tasks = listOf(),
+            selectedTasksIndex = setOf(1, 2)
+        ),
+        onCreateTaskClick = {},
+        onTaskCheckedChange = { _, _ -> },
+        onSelectTaskFilter = {},
+        onSelectTaskIndex = {},
+        onClearSelection = {},
+        onDeleteClick = {},
+        onSettingsClick = {},
+        onRefresh = {},
+        onTaskClick = {}
+    )
+}
+
 
 @Composable
 @Preview
@@ -411,8 +469,7 @@ private fun NormalTopAppBarOfflinePreview() {
                 uiState = HomeUiState(syncStatus = QueueSyncStatus.Waiting),
                 scope = rememberCoroutineScope(),
                 tooltipState = rememberTooltipState(true),
-                {}
-            )
+            ) {}
         }
     }
 }
@@ -427,8 +484,7 @@ private fun NormalTopAppBarTipOpenedPreview() {
                 uiState = HomeUiState(syncStatus = QueueSyncStatus.Syncing),
                 scope = rememberCoroutineScope(),
                 tooltipState = rememberTooltipState(true),
-                {}
-            )
+            ) {}
         }
     }
 }

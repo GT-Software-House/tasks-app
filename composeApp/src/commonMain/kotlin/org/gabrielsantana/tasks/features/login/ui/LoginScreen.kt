@@ -48,7 +48,14 @@ fun LoginScreen(
         type = GoogleDialogType.BOTTOM_SHEET,
         onResult = {
             when (it) {
-                NativeSignInResult.ClosedByUser -> {}
+                NativeSignInResult.ClosedByUser -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Sign in cancelled",
+                            withDismissAction = true
+                        )
+                    }
+                }
                 is NativeSignInResult.Error -> {
                     scope.launch {
                         snackbarHostState.showSnackbar(
@@ -69,6 +76,13 @@ fun LoginScreen(
 
                 NativeSignInResult.Success -> {}
             }
+
+        },
+        fallback = {
+            snackbarHostState.showSnackbar(
+                message = "Your device is not supported. Contact the developers.",
+                withDismissAction = true
+            )
         }
     )
     if (authState.status is NativeSignInStatus.Started) {

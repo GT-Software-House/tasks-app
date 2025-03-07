@@ -7,7 +7,10 @@ import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.googleNativeLogin
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.realtime.Realtime
 import org.gabrielsantana.tasks.TasksDatabase
+import org.gabrielsantana.tasks.data.Syncer
+import org.gabrielsantana.tasks.data.TaskSyncer
 import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.data.driver.DatabaseDriverFactory
 import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
@@ -20,16 +23,21 @@ import org.koin.dsl.module
 val appModule = module {
     //TODO: many 'singles', improve this
     single { TasksDatabase(get<DatabaseDriverFactory>().createDriver()) }
+    factory<TaskSyncer> { TaskSyncer(get(), get(), get()) }
     single { TasksLocalDataSource(get()) }
     single { TasksRemoteDataSource(get()) }
     includes(homeModule, createTaskModule, preferencesModule)
     single { TasksRepository(get(), get(), get()) }
     single {
         createSupabaseClient(SUPABASE_URL,  SUPABASE_KEY) {
-            install(Auth)
+            install(Auth) {
+                //the navigation is controlled by session state and it's cleaned and reloaded on app callbacks, so we need to disable that 'optimization'
+                enableLifecycleCallbacks = false
+            }
             install(ComposeAuth) {
                 googleNativeLogin(SERVER_CLIENT_ID)
             }
+            install(Realtime)
             install(Postgrest) {
                 defaultSchema = "public"
             }

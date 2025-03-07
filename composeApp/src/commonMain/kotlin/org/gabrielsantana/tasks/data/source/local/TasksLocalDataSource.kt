@@ -17,7 +17,6 @@ import kotlin.uuid.Uuid
 class TasksLocalDataSource(private val db: TasksDatabase) {
     private val queries = db.taskQueries
 
-    // Set id = null to let SQLDelight autogenerate the id
     /**
      * Create and return [TaskEntity]
      */
@@ -25,7 +24,7 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
         title: String,
         description: String,
         isCompleted: Boolean,
-        createdAtTimestamp: Long = Clock.System.now().toEpochMilliseconds(),
+        createdAtTimestamp: String = Clock.System.now().toString(),
     ): TaskEntity {
         return queries.transactionWithResult {
             val uuid = Uuid.random().toString()
@@ -37,11 +36,25 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
                 isCompleted = isCompleted,
                 createdAtTimestamp = createdAtTimestamp,
                 completedAtTimestamp = null,
-                updatedAtTimestamp = null,
+                updatedAtTimestamp = createdAtTimestamp,
             )
             db.taskQueries.getById(uuid = uuid).executeAsOne()
         }
 
+    }
+
+    fun upsert(task: TaskEntity) {
+        queries.insert(
+            uuid = task.uuid,
+            deviceId = task.deviceId,
+            title = task.title,
+            description = task.description,
+            isCompleted = task.isCompleted,
+            completedAtTimestamp = task.completedAtTimestamp,
+            createdAtTimestamp = task.createdAtTimestamp,
+            updatedAtTimestamp = task.updatedAtTimestamp
+
+        )
     }
 
     fun getAll(): Flow<List<TaskEntity>> = queries.getAll().asFlow().mapToList(Dispatchers.IO)
@@ -51,7 +64,15 @@ class TasksLocalDataSource(private val db: TasksDatabase) {
     }
 
     fun updateIsChecked(uuid: String, isChecked: Boolean) {
-        queries.updateIsChecked(isCompleted = isChecked, uuid = uuid)
+        queries.updateIsChecked(
+            isCompleted = isChecked,
+            uuid = uuid,
+            completedAtTimestamp = if (isChecked) Clock.System.now().toString() else null
+        )
+    }
+
+    fun updateTitleAndDescription(uuid: String, title: String, description: String) {
+        queries.updateTitleAndDescription(title = title, description = description, uuid = uuid)
     }
 
     /**

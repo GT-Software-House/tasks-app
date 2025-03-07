@@ -15,25 +15,25 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CreateTaskScreen(
-    onNavigateBack: (taskCreated: Boolean) -> Unit,
+    onNavigateBack: (taskAction: TaskAction?) -> Unit,
     viewModel: CreateTaskViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState.taskCreatedSuccessfully) {
-        if (uiState.taskCreatedSuccessfully) onNavigateBack(true)
+    LaunchedEffect(uiState.taskAction) {
+        if (uiState.taskAction != null) {
+            onNavigateBack(uiState.taskAction)
+        }
     }
 
     CreateTaskContent(
         uiState = uiState,
-        onNavigationBackClick = { onNavigateBack(false) },
+        onNavigationBackClick = { onNavigateBack(null) },
         onCreateClick = viewModel::createTask,
         onDescriptionChange = viewModel::updateDescription,
         onTitleChange = viewModel::updateTitle,
@@ -48,19 +48,19 @@ fun CreateTaskContent(
     onCreateClick: () -> Unit,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
 ) {
-    val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
-
-
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
         topBar = {
             TopAppBar(
-                title = { Text("Create task") },
+                title = {
+                    val title = if (uiState.isEditMode) "Edit task" else "Create task"
+                    Text(title)
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigationBackClick) {
                         Icon(
@@ -71,7 +71,8 @@ fun CreateTaskContent(
                 },
                 actions = {
                     Button(onClick = onCreateClick) {
-                        Text("Create")
+                        val label = if (uiState.isEditMode) "Update" else "Create"
+                        Text(label)
                     }
                     Spacer(Modifier.width(4.dp))
                 }
@@ -86,7 +87,7 @@ fun CreateTaskContent(
                 label = { Text("Title") },
                 supportingText = {
                     if (uiState.isTitleInvalid == true)
-                        Text("O título não pode ser vazia")
+                        Text("Não pode ser vazio")
                 },
                 isError = uiState.isTitleInvalid == true,
                 modifier = Modifier.fillMaxWidth()
@@ -98,7 +99,7 @@ fun CreateTaskContent(
                 label = { Text("Description") },
                 supportingText = {
                     if (uiState.isDescriptionInvalid == true)
-                        Text("A descrição não pode ser vazia")
+                        Text("Não pode ser vazio")
                 },
                 modifier = Modifier.fillMaxWidth()
             )

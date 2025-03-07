@@ -57,7 +57,8 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.android.workmanager)
             implementation(libs.ktor.client.okhttp)
-
+            implementation(libs.androidx.startup.runtime)
+            implementation(libs.androidx.core.splashscreen)
             // Kotlin + coroutines
             implementation(libs.androidx.work.runtime.ktx)
             // optional - GCMNetworkManager support
@@ -104,6 +105,9 @@ kotlin {
             implementation(libs.supabase.auth.kt)
             implementation(libs.supabase.compose.auth)
             implementation(libs.supabase.postgrest)
+            implementation(libs.supabase.realtime)
+
+            implementation(libs.kermit)
         }
         commonTest.dependencies {
             implementation(libs.mockk.common)

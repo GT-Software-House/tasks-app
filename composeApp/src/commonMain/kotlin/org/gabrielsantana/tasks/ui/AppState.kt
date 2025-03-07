@@ -40,7 +40,7 @@ class AppState(
         .map { it is SessionStatus.Authenticated }
         .stateIn(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = supabaseClient.auth.sessionStatus.value is SessionStatus.Authenticated
         )
 }
