@@ -2,14 +2,10 @@ package org.gabrielsantana.tasks.features.home.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.data.model.Task
 import org.gabrielsantana.tasks.data.scheduler.TaskSyncScheduler
@@ -116,8 +112,25 @@ class HomeViewModel(
     fun refresh() {
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.update { it.copy(isRefreshing = true) }
-            tasksRepository.oneTimeSync()
+            doWithRetry(::refresh) {
+                tasksRepository.oneTimeSync()
+            }
             _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
+    fun doRetryAction() {
+        _uiState.value.retryAction?.invoke()
+        _uiState.update { it.copy(retryAction = null) }
+    }
+
+    private inline fun doWithRetry(noinline retry: () -> Unit, action: () -> Unit ) {
+        try {
+            action()
+        } catch (_: Throwable) {
+            _uiState.update {
+                it.copy(retryAction = retry)
+            }
         }
     }
 

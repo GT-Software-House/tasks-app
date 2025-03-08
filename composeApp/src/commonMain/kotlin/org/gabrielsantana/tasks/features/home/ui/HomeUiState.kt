@@ -8,7 +8,8 @@ data class HomeUiState(
     val selectedTasksIndex: Set<Int> = emptySet(),
     val selectedTaskFilter: TaskFilter = TaskFilter.ALL,
     val syncStatus: QueueSyncStatus = QueueSyncStatus.Empty,
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
+    val retryAction: (() -> Unit)? = null,
 ) {
     val isSelectionMode: Boolean
         get() = selectedTasksIndex.isNotEmpty()

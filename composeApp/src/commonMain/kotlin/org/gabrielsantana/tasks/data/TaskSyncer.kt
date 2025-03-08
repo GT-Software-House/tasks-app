@@ -2,10 +2,7 @@ package org.gabrielsantana.tasks.data
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
 import org.gabrielsantana.tasks.data.source.local.model.asNetworkModel
 import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
@@ -41,6 +38,8 @@ class TaskSyncer(
                 fetchAndSaveChanges(transactions)
             }.onCompletion {
                 Logger.i(TAG) { "Stopping to listen remote changes" }
+            }.catch {
+                Logger.e(TAG) { "Error on realtime change listening" }
             }
             .collect()
     }

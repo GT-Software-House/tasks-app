@@ -8,10 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,7 +16,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.gabrielsantana.tasks.data.TasksRepository
 import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.tasks.features.create.ui.TaskAction
 import org.gabrielsantana.tasks.features.home.ui.HomeScreen
@@ -28,13 +24,11 @@ import org.gabrielsantana.tasks.features.settings.SettingsScreen
 import org.gabrielsantana.tasks.features.settings.appearance.ui.AppearanceScreen
 import org.gabrielsantana.tasks.ui.theme.TasksTheme
 import org.koin.compose.getKoin
-import org.koin.compose.koinInject
 
 @Composable
 fun App(
     navController: NavHostController = rememberNavController(),
     appState: AppState = rememberAppState(getKoin().get()),
-    tasksRepository: TasksRepository = koinInject()
 ) {
     val darkTheme = appState.themeMode.collectAsStateWithLifecycle().value.isDarkMode
     val isAmoled by appState.isAmoled.collectAsStateWithLifecycle()
@@ -42,13 +36,6 @@ fun App(
     val isDynamicColorEnabled by appState.isDynamicColorEnabled.collectAsStateWithLifecycle()
     val isLoggedIn by appState.isLoggedIn.collectAsStateWithLifecycle()
     val startDestination = if (isLoggedIn) AppScreens.Home else AppScreens.Login
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(lifecycleOwner) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            tasksRepository.reactiveSync()
-        }
-    }
 
     TasksTheme(
         dynamicColorSeed = colorSeed,
