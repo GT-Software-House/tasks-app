@@ -9,16 +9,10 @@ val modulePackageName = "org.gabrielsantana.quicknotes.feature.home"
 
 kotlin {
 
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
-    // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
         namespace = modulePackageName
         compileSdk = 35
         minSdk = 24
-
-        withHostTestBuilder {
-        }
 
         withDeviceTestBuilder {
             sourceSetTreeName = "test"
@@ -27,13 +21,6 @@ kotlin {
         }
     }
 
-    // For iOS targets, this is also where you should
-    // configure native binary output. For more information, see:
-    // https://kotlinlang.org/docs/multiplatform-build-native-binaries.html#build-xcframeworks
-
-    // A step-by-step guide on how to include this library in an XCode
-    // project can be found here:
-    // https://developer.android.com/kotlin/multiplatform/migrate
     listOf(
         iosX64(),
         iosArm64(),
@@ -42,9 +29,6 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Home"
             isStatic = true
-        }
-        iosTarget.binaries.all {
-            linkerOpts("-lsqlite3")
         }
     }
 
@@ -85,7 +69,5 @@ kotlin {
                 implementation(libs.androidx.test.junit)
             }
         }
-
     }
-
 }
