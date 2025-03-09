@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -40,17 +39,9 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
         }
-        iosTarget.binaries.all {
-            linkerOpts("-lsqlite3")
-        }
     }
 
-    jvm("desktop")
-
     sourceSets {
-
-        val desktopMain by getting
-
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -111,11 +102,6 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.mockk.common)
             implementation(libs.kotlin.test)
-        }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-            implementation(libs.sqldelight.jvm)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native)
@@ -184,20 +170,4 @@ skie {
 
 composeCompiler {
     featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
-}
-
-compose.desktop {
-    application {
-        mainClass = appPackageName + "MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = appPackageName
-            packageVersion = "1.0.0"
-
-            macOS {
-                modules("jdk.crypto.ec")
-            }
-        }
-    }
 }

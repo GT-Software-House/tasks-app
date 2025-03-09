@@ -11,6 +11,10 @@ kotlin {
         compileSdk = 35
         minSdk = 24
 
+        //For Unit Tests
+        withHostTestBuilder {  }
+
+        //For Instrumented Tests
         withDeviceTestBuilder {
             sourceSetTreeName = "test"
         }.configure {
