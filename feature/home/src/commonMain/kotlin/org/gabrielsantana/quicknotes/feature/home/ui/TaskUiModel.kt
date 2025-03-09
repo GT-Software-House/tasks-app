@@ -1,4 +1,4 @@
-package org.gabrielsantana.quicknotes.home.ui
+package org.gabrielsantana.quicknotes.feature.home.ui
 
 data class TaskUiModel(
     val uuid: String,

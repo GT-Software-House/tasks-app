@@ -5,13 +5,15 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+val modulePackageName = "org.gabrielsantana.quicknotes.feature.home"
+
 kotlin {
 
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
-        namespace = "com.gabrielsantana.tasks.home"
+        namespace = modulePackageName
         compileSdk = 35
         minSdk = 24
 

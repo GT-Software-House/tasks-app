@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
-val libraryPackageName = "org.gabrielsantana.quicknotes.data.task"
+val modulePackageName = "org.gabrielsantana.quicknotes.data.task"
 
 kotlin {
 
@@ -13,7 +13,7 @@ kotlin {
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
-        namespace = libraryPackageName
+        namespace = modulePackageName
         compileSdk = 35
         minSdk = 24
 
@@ -106,7 +106,7 @@ kotlin {
     sqldelight {
         databases {
             create("TaskDatabase") {
-                packageName = libraryPackageName
+                packageName = modulePackageName
             }
         }
     }

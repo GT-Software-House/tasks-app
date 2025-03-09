@@ -1,4 +1,4 @@
-package org.gabrielsantana.quicknotes.home
+package org.gabrielsantana.quicknotes.feature.home
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

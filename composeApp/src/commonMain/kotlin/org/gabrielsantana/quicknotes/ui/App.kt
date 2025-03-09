@@ -21,7 +21,7 @@ import org.gabrielsantana.quicknotes.features.create.ui.TaskAction
 import org.gabrielsantana.quicknotes.features.login.ui.LoginScreen
 import org.gabrielsantana.quicknotes.features.settings.SettingsScreen
 import org.gabrielsantana.quicknotes.features.settings.appearance.ui.AppearanceScreen
-import org.gabrielsantana.quicknotes.home.ui.HomeScreen
+import org.gabrielsantana.quicknotes.feature.home.ui.HomeScreen
 import org.gabrielsantana.quicknotes.ui.theme.TasksTheme
 import org.koin.compose.getKoin
 

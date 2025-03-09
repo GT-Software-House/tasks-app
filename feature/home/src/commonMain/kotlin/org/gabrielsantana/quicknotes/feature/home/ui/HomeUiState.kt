@@ -1,4 +1,4 @@
-package org.gabrielsantana.quicknotes.home.ui
+package org.gabrielsantana.quicknotes.feature.home.ui
 
 import org.gabrielsantana.quicknotes.data.task.scheduler.QueueSyncStatus
 
