@@ -9,8 +9,8 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
 import org.gabrielsantana.quicknotes.data.task.coreDataModule
 import org.gabrielsantana.quicknotes.features.create.di.createTaskModule
-import org.gabrielsantana.quicknotes.features.settings.appearance.di.preferencesModule
 import org.gabrielsantana.quicknotes.feature.home.di.homeModule
+import org.gabrielsantana.quicknotes.feature.preferences.appearance.di.preferencesModule
 import org.koin.dsl.module
 
 val appModule = module {
@@ -31,6 +31,7 @@ val appModule = module {
             }
         }
     }
+
     single {
         Connectivity {
             autoStart = true

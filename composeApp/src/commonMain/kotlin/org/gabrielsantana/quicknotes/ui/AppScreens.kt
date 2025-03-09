@@ -3,19 +3,16 @@ package org.gabrielsantana.quicknotes.ui
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class AppScreens {
+sealed interface AppScreens {
     @Serializable
-    data object Login : AppScreens()
+    data object Login : AppScreens
 
     @Serializable
-    data object Home : AppScreens()
+    data object Home : AppScreens
 
     @Serializable
-    data class CreateTask(val taskUuid: String? = null) : AppScreens()
+    data class CreateTask(val taskUuid: String? = null) : AppScreens
 
     @Serializable
-    data object Settings : AppScreens()
-
-    @Serializable
-    data object Appearance : AppScreens()
+    data object Preferences : AppScreens
 }

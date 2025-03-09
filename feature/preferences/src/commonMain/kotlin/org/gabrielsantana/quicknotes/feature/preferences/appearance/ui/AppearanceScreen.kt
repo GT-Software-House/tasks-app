@@ -1,4 +1,4 @@
-package org.gabrielsantana.quicknotes.features.settings.appearance.ui
+package org.gabrielsantana.quicknotes.feature.preferences.appearance.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -39,9 +39,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.gabrielsantana.quicknotes.ui.ThemeMode
-import org.gabrielsantana.quicknotes.ui.components.material.RadioItem
-import org.gabrielsantana.quicknotes.ui.components.material.SelectableItem
+import org.gabrielsantana.quicknotes.core.components.RadioItem
+import org.gabrielsantana.quicknotes.core.components.SelectableItem
+import org.gabrielsantana.quicknotes.feature.preferences.appearance.data.model.ThemeMode
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -75,7 +75,7 @@ fun AppearanceScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppearanceContent(
+internal fun AppearanceContent(
     uiState: AppearanceUiState,
     onBackClick: () -> Unit,
     onChangeThemeMode: (ThemeMode) -> Unit,
@@ -157,7 +157,7 @@ fun AppearanceContent(
 }
 
 @Composable
-fun ColorSelector(
+internal fun ColorSelector(
     selectedColor: Color? = null,
     onSelectColor: (Color) -> Unit,
     modifier: Modifier
@@ -179,7 +179,7 @@ fun ColorSelector(
 }
 
 @Composable
-fun ColorItem(
+internal fun ColorItem(
     color: Color,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -212,7 +212,7 @@ fun ColorItem(
 
 @Preview
 @Composable
-fun DefaultPreviewAppearanceScreen() {
+private fun DefaultPreviewAppearanceScreen() {
     MaterialTheme {
         AppearanceContent(
             uiState = AppearanceUiState(

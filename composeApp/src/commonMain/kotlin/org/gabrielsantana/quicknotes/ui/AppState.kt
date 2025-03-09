@@ -14,13 +14,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import org.gabrielsantana.quicknotes.features.settings.appearance.data.PreferencesRepository
+import org.gabrielsantana.quicknotes.feature.preferences.appearance.data.PreferencesRepository
+import org.gabrielsantana.quicknotes.feature.preferences.appearance.data.model.ThemeMode
 import org.koin.compose.koinInject
 
 @Stable
 class AppState(
-    private val preferencesRepository: PreferencesRepository,
-    private val supabaseClient: SupabaseClient,
+    preferencesRepository: PreferencesRepository,
+    supabaseClient: SupabaseClient,
     coroutineScope: CoroutineScope,
 ) {
     val themeMode: StateFlow<ThemeMode> =
@@ -51,11 +52,7 @@ val ThemeMode.isDarkMode: Boolean
         return if (this is ThemeMode.System) isSystemInDarkTheme() else this is ThemeMode.Dark
     }
 
-sealed class ThemeMode {
-    data object System : ThemeMode()
-    data object Light : ThemeMode()
-    data object Dark : ThemeMode()
-}
+
 
 
 @Composable

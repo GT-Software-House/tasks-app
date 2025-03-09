@@ -1,4 +1,4 @@
-package org.gabrielsantana.quicknotes.features.settings
+package org.gabrielsantana.quicknotes.feature.preferences
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalSettingsApi::class)
 
-package org.gabrielsantana.quicknotes.features.settings.appearance.data
+package org.gabrielsantana.quicknotes.feature.preferences.appearance.data
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -8,7 +8,7 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.gabrielsantana.quicknotes.ui.ThemeMode
+import org.gabrielsantana.quicknotes.feature.preferences.appearance.data.model.ThemeMode
 
 class PreferencesRepository(
     private val flowSettings: FlowSettings,

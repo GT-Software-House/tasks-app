@@ -1,6 +1,6 @@
-package org.gabrielsantana.quicknotes.features.settings.appearance.ui
+package org.gabrielsantana.quicknotes.feature.preferences.appearance.ui
 
-import org.gabrielsantana.quicknotes.ui.ThemeMode
+import org.gabrielsantana.quicknotes.feature.preferences.appearance.data.model.ThemeMode
 
 data class AppearanceUiState(
     val themeMode: ThemeMode = ThemeMode.System,

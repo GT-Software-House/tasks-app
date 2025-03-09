@@ -98,6 +98,7 @@ kotlin {
             implementation(libs.connectivity.device)
             implementation(projects.data.task)
             implementation(projects.feature.home)
+            implementation(projects.feature.preferences)
 
             //Firebase KMP AUTH
 //            implementation(libs.kmpauth.google)

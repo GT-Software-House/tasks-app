@@ -1,12 +1,12 @@
-package org.gabrielsantana.quicknotes.features.settings.appearance.ui
+package org.gabrielsantana.quicknotes.feature.preferences.appearance.ui
 
 import androidx.annotation.ColorInt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.gabrielsantana.quicknotes.features.settings.appearance.data.PreferencesRepository
-import org.gabrielsantana.quicknotes.ui.ThemeMode
+import org.gabrielsantana.quicknotes.feature.preferences.appearance.data.PreferencesRepository
+import org.gabrielsantana.quicknotes.feature.preferences.appearance.data.model.ThemeMode
 
 class AppearanceViewModel(
     private val preferencesRepository: PreferencesRepository

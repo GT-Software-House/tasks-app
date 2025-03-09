@@ -16,12 +16,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.gabrielsantana.quicknotes.feature.home.ui.HomeScreen
+import org.gabrielsantana.quicknotes.feature.preferences.preferencesNavigation
 import org.gabrielsantana.quicknotes.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.quicknotes.features.create.ui.TaskAction
 import org.gabrielsantana.quicknotes.features.login.ui.LoginScreen
-import org.gabrielsantana.quicknotes.features.settings.SettingsScreen
-import org.gabrielsantana.quicknotes.features.settings.appearance.ui.AppearanceScreen
-import org.gabrielsantana.quicknotes.feature.home.ui.HomeScreen
 import org.gabrielsantana.quicknotes.ui.theme.TasksTheme
 import org.koin.compose.getKoin
 
@@ -69,7 +68,7 @@ fun App(
                         navController.navigate(AppScreens.CreateTask())
                     },
                     onNavigateToSettings = {
-                        navController.navigate(AppScreens.Settings)
+                        navController.navigate(AppScreens.Preferences)
                     },
                     onNavigateToEditTask = {
                         navController.navigate(AppScreens.CreateTask(it))
@@ -88,23 +87,7 @@ fun App(
                     },
                 )
             }
-            composable<AppScreens.Settings> {
-                SettingsScreen(
-                    onNavigateToAppearance = {
-                        navController.navigate(AppScreens.Appearance)
-                    },
-                    onNavigateBack = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-            composable<AppScreens.Appearance> {
-                AppearanceScreen(
-                    onNavigateBack = {
-                        navController.popBackStack()
-                    }
-                )
-            }
+            preferencesNavigation<AppScreens.Preferences>(navController)
         }
         NavHost(
             enterTransition = {
