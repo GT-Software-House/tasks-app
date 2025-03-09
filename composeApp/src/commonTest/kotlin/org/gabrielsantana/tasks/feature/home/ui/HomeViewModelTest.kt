@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import org.gabrielsantana.tasks.Task
-import org.gabrielsantana.tasks.data.TasksRepository
+import org.gabrielsantana.quicknote.data.task.data.TasksRepository
 import org.gabrielsantana.tasks.features.home.ui.HomeUiState
 import org.gabrielsantana.tasks.features.home.ui.HomeViewModel
 import org.gabrielsantana.tasks.features.home.ui.TaskUiModel

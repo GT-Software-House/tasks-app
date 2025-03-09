@@ -3,6 +3,7 @@ package org.gabrielsantana.tasks.data
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.cinterop.ExperimentalForeignApi
+import org.gabrielsantana.quicknote.data.task.data.createDataStore
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL

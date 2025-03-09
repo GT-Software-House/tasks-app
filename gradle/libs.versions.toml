@@ -1,5 +1,5 @@
 [versions]
-agp = "8.6.1"
+agp = "8.8.0"
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
@@ -121,3 +121,4 @@ foojayResolverConvention = { id = "org.gradle.toolchains.foojay-resolver-convent
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradlePlugins-crashlytics" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gradlePlugins-google-services" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }

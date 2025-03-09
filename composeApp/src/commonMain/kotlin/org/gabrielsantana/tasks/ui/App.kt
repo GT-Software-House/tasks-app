@@ -18,10 +18,10 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.gabrielsantana.tasks.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.tasks.features.create.ui.TaskAction
-import org.gabrielsantana.tasks.features.home.ui.HomeScreen
 import org.gabrielsantana.tasks.features.login.ui.LoginScreen
 import org.gabrielsantana.tasks.features.settings.SettingsScreen
 import org.gabrielsantana.tasks.features.settings.appearance.ui.AppearanceScreen
+import org.gabrielsantana.tasks.home.ui.HomeScreen
 import org.gabrielsantana.tasks.ui.theme.TasksTheme
 import org.koin.compose.getKoin
 

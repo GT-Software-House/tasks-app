@@ -1,6 +1,5 @@
 package org.gabrielsantana.tasks.di
 
-
 import dev.jordond.connectivity.Connectivity
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.compose.auth.ComposeAuth
@@ -8,26 +7,15 @@ import io.github.jan.supabase.compose.auth.googleNativeLogin
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
-import org.gabrielsantana.tasks.TasksDatabase
-import org.gabrielsantana.tasks.data.Syncer
-import org.gabrielsantana.tasks.data.TaskSyncer
-import org.gabrielsantana.tasks.data.TasksRepository
-import org.gabrielsantana.tasks.data.driver.DatabaseDriverFactory
-import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
-import org.gabrielsantana.tasks.data.source.remote.TasksRemoteDataSource
+import org.gabrielsantana.tasks.data.coreDataModule
 import org.gabrielsantana.tasks.features.create.di.createTaskModule
-import org.gabrielsantana.tasks.features.home.di.homeModule
 import org.gabrielsantana.tasks.features.settings.appearance.di.preferencesModule
+import org.gabrielsantana.tasks.home.di.homeModule
 import org.koin.dsl.module
 
 val appModule = module {
     //TODO: many 'singles', improve this
-    single { TasksDatabase(get<DatabaseDriverFactory>().createDriver()) }
-    factory<TaskSyncer> { TaskSyncer(get(), get(), get()) }
-    single { TasksLocalDataSource(get()) }
-    single { TasksRemoteDataSource(get()) }
-    includes(homeModule, createTaskModule, preferencesModule)
-    single { TasksRepository(get(), get(), get()) }
+    includes(coreDataModule, homeModule, createTaskModule, preferencesModule)
     single {
         createSupabaseClient(SUPABASE_URL,  SUPABASE_KEY) {
             install(Auth) {

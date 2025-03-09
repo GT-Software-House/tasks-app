@@ -11,6 +11,6 @@ import org.koin.dsl.module
 
 @OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
 val preferencesModule = module {
-    single { PreferencesRepository(DataStoreSettings(get())) }
+    single { PreferencesRepository(get()) }
     viewModelOf(::AppearanceViewModel)
 }

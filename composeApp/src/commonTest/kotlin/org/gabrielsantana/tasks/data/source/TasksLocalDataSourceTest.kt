@@ -3,7 +3,7 @@ package org.gabrielsantana.tasks.data.source
 import io.mockk.mockk
 import io.mockk.verify
 import org.gabrielsantana.tasks.TasksDatabase
-import org.gabrielsantana.tasks.data.source.local.TasksLocalDataSource
+import org.gabrielsantana.quicknote.data.task.data.source.local.TasksLocalDataSource
 import kotlin.test.Test
 
 class TasksLocalDataSourceTest {

@@ -94,7 +94,8 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.connectivity.core)
             implementation(libs.connectivity.device)
-
+            implementation(projects.core.data)
+            implementation(projects.feature.home)
 
             //Firebase KMP AUTH
 //            implementation(libs.kmpauth.google)
@@ -125,13 +126,7 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
     }
-    sqldelight {
-        databases {
-            create("TasksDatabase") {
-                packageName = "org.gabrielsantana.tasks"
-            }
-        }
-    }
+
 }
 
 android {
@@ -175,15 +170,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
-task("print") {
-    val password = System.getenv("DEBUG_KEY_PASSWORD")
-    val path = System.getenv("DEBUG_KEY_LOCATION")
-    doLast {
-        println("fdsfsdafsdafsad$password")
-        println("fdsfsdafsdafsad$path")
     }
 }
 
