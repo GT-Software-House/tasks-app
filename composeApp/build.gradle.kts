@@ -16,6 +16,8 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
+val appPackageName = "org.gabrielsantana.quicknotes"
+
 kotlin {
     compilerOptions {
         // Common compiler options applied to all Kotlin source sets
@@ -94,7 +96,7 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.connectivity.core)
             implementation(libs.connectivity.device)
-            implementation(projects.core.data)
+            implementation(projects.data.task)
             implementation(projects.feature.home)
 
             //Firebase KMP AUTH
@@ -130,11 +132,11 @@ kotlin {
 }
 
 android {
-    namespace = "org.gabrielsantana.tasks"
+    namespace = appPackageName
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "org.gabrielsantana.tasks"
+        applicationId = appPackageName
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -190,11 +192,11 @@ composeCompiler {
 
 compose.desktop {
     application {
-        mainClass = "org.gabrielsantana.tasks.MainKt"
+        mainClass = appPackageName + "MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "org.gabrielsantana.tasks"
+            packageName = appPackageName
             packageVersion = "1.0.0"
 
             macOS {

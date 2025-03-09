@@ -30,11 +30,11 @@
                 tools:node="merge">
 
             <meta-data
-                    android:name="org.gabrielsantana.tasks.initializer.KoinInitializer"
+                    android:name="org.gabrielsantana.quicknotes.initializer.KoinInitializer"
                     android:value="androidx.startup" />
 
             <meta-data
-                    android:name="org.gabrielsantana.tasks.initializer.AppStartupSync"
+                    android:name="org.gabrielsantana.quicknotes.initializer.AppStartupSync"
                     android:value="androidx.startup" />
             <meta-data
                     android:name="androidx.work.WorkManagerInitializer"
