@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.kotlinSerialization)
 }
@@ -9,19 +12,11 @@ val modulePackageName = "org.gabrielsantana.quicknotes.data.task"
 
 kotlin {
 
-    androidLibrary {
-        namespace = modulePackageName
-        compileSdk = 35
-        minSdk = 24
-
-        //For Unit Tests
-        withHostTestBuilder {  }
-
-        //For Instrumented Tests
-        withDeviceTestBuilder {
-            sourceSetTreeName = "test"
-        }.configure {
-            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    androidTarget {
+        publishLibraryVariants("release")
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
@@ -78,7 +73,7 @@ kotlin {
             implementation(libs.sqldelight.android)
         }
 
-        getByName("androidDeviceTest").dependencies {
+        androidInstrumentedTest.dependencies {
             implementation(libs.androidx.runner)
             implementation(libs.androidx.core)
             implementation(libs.androidx.test.junit)
@@ -97,4 +92,24 @@ kotlin {
         }
     }
 
+}
+
+android {
+    namespace = modulePackageName
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+}
+
+dependencies {
+    testImplementation(libs.junit.jupiter)
 }
