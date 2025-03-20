@@ -1,4 +1,4 @@
-package org.gabrielsantana.quicknotes.features.login.ui.icons.filled
+package org.gabrielsantana.quicknotes.feature.auth.ui.filled
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.ui.graphics.Color
@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-val Icons.Filled.Google: ImageVector
+internal val Icons.Filled.Google: ImageVector
     get() {
         if (_Google != null) {
             return _Google!!

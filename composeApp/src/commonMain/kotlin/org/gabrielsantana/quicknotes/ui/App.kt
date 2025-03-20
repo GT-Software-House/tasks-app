@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -14,13 +15,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.gabrielsantana.quicknotes.feature.auth.ui.LoginScreen
 import org.gabrielsantana.quicknotes.feature.home.ui.HomeScreen
 import org.gabrielsantana.quicknotes.feature.preferences.preferencesNavigation
 import org.gabrielsantana.quicknotes.features.create.ui.CreateTaskScreen
 import org.gabrielsantana.quicknotes.features.create.ui.TaskAction
-import org.gabrielsantana.quicknotes.features.login.ui.LoginScreen
 import org.gabrielsantana.quicknotes.ui.theme.TasksTheme
 import org.koin.compose.getKoin
 
@@ -29,7 +29,7 @@ fun App(
     navController: NavHostController = rememberNavController(),
     appState: AppState = rememberAppState(getKoin().get()),
 ) {
-    val darkTheme = appState.themeMode.collectAsStateWithLifecycle().value.isDarkMode
+    val darkTheme = appState.themeMode.collectAsStateWithLifecycle().isDarkMode
     val isAmoled by appState.isAmoled.collectAsStateWithLifecycle()
     val colorSeed by appState.seedColor.collectAsStateWithLifecycle()
     val isDynamicColorEnabled by appState.isDynamicColorEnabled.collectAsStateWithLifecycle()
@@ -44,7 +44,12 @@ fun App(
     ) {
         val graph = navController.createGraph(startDestination = startDestination) {
             composable<AppScreens.Login> {
-                LoginScreen()
+                LoginScreen(
+                    onLoginSuccess = {
+                        //we don't need navigate here because we already navigate automatically with the auth status
+                        //let keep this callback for safety, makes sense
+                    }
+                )
             }
             composable<AppScreens.Home> { entry ->
                 val taskActionDone = entry.savedStateHandle.get<String>("taskAction")?.let {

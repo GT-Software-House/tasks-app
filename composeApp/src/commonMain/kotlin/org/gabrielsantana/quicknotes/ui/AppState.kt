@@ -3,6 +3,7 @@ package org.gabrielsantana.quicknotes.ui
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
@@ -46,15 +47,6 @@ class AppState(
         )
 }
 
-val ThemeMode.isDarkMode: Boolean
-    @Composable
-    get() {
-        return if (this is ThemeMode.System) isSystemInDarkTheme() else this is ThemeMode.Dark
-    }
-
-
-
-
 @Composable
 fun rememberAppState(
     preferencesRepository: PreferencesRepository = koinInject(),
@@ -63,3 +55,9 @@ fun rememberAppState(
 ): AppState = remember {
     AppState(preferencesRepository, supabaseClient, coroutineScope)
 }
+
+val State<ThemeMode>.isDarkMode: Boolean
+    @Composable
+    get() {
+        return if (value is ThemeMode.System) isSystemInDarkTheme() else value is ThemeMode.Dark
+    }

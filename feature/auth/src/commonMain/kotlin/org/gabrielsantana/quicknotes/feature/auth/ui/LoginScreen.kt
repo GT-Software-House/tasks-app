@@ -1,13 +1,11 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package org.gabrielsantana.quicknotes.features.login.ui
+package org.gabrielsantana.quicknotes.feature.auth.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,18 +30,20 @@ import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 import io.github.jan.supabase.compose.auth.composable.NativeSignInStatus
 import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 import io.github.jan.supabase.compose.auth.composeAuth
-import io.ktor.util.generateNonce
 import kotlinx.coroutines.launch
-import org.gabrielsantana.quicknotes.features.login.ui.icons.filled.Google
+import org.gabrielsantana.quicknotes.core.components.HorizontalSpacer
+import org.gabrielsantana.quicknotes.feature.auth.ui.filled.Google
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 
 @Composable
 fun LoginScreen(
-    supabaseClient: SupabaseClient = koinInject()
+    supabaseClient: SupabaseClient = koinInject(),
+    onLoginSuccess: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
     val authState = supabaseClient.composeAuth.rememberSignInWithGoogle(
         type = GoogleDialogType.BOTTOM_SHEET,
         onResult = {
@@ -74,7 +74,7 @@ fun LoginScreen(
                     }
                 }
 
-                NativeSignInResult.Success -> {}
+                NativeSignInResult.Success -> onLoginSuccess
             }
 
         },
@@ -92,14 +92,14 @@ fun LoginScreen(
     }
     LoginContent(
         onSignInClick = {
-            authState.startFlow(generateNonce())
+            authState.startFlow()
         },
         snackbarHostState = snackbarHostState
     )
 }
 
 @Composable
-fun LoginContent(
+internal fun LoginContent(
     onSignInClick: () -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
@@ -123,9 +123,9 @@ fun LoginContent(
             Button(
                 onClick = onSignInClick
             ) {
-                Icon(Icons.Default.Google, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Enter with Google")
+                Icon(imageVector = Icons.Default.Google, contentDescription = null)
+                HorizontalSpacer(width = 8.dp)
+                Text(text = "Enter with Google")
             }
         }
     }
@@ -133,7 +133,7 @@ fun LoginContent(
 
 @Preview
 @Composable
-fun LoginContentPreview() {
+private fun LoginContentPreview() {
     MaterialTheme {
         LoginContent(
             onSignInClick = {},

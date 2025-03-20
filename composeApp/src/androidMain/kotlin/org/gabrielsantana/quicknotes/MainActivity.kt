@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             val appState = rememberAppState()
-            val darkTheme = appState.themeMode.collectAsStateWithLifecycle().value.isDarkMode
+            val darkTheme = appState.themeMode.collectAsStateWithLifecycle().isDarkMode
             LaunchedEffect(darkTheme) {
                 enableEdgeToEdge(
                     statusBarStyle = SystemBarStyle.auto(
