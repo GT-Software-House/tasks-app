@@ -8,31 +8,26 @@ androidx-lifecycle = "2.8.3"
 androidx-test-junit = "1.2.1"
 coreSplashscreen = "1.0.1"
 kermit = "2.0.5"
-supabase-bom = "3.1.1"
-compose-multiplatform = "1.7.0"
-datastorePreferences = "1.1.2"
-junit = "4.13.2"
-kmpauthFirebase = "2.3.1"
-kotlin = "2.1.0"
-kotlinx-coroutines = "1.9.0"
-kotlinxDatetime = "0.6.1"
-kotlinxSerializationJson = "1.7.3"
-lifecycleViewmodelCompose = "2.8.2"
-material3 = "1.3.1"
+supabase-bom = "3.1.3"
+compose-multiplatform = "1.7.3"
+datastorePreferences = "1.1.3"
+kotlin = "2.1.10"
+kotlinxDatetime = "0.6.2"
+kotlinxSerializationJson = "1.8.0"
+lifecycleViewmodelCompose = "2.8.4"
 mockk = "1.12.5"
-multiplatformSettingsDatastore = "1.3.0"
-multiplatformSettingsSerialization = "1.2.0"
-navigationCompose = "2.8.0-alpha10"
+multiplatformSettings= "1.3.0"
+navigationCompose = "2.8.0-alpha13"
 sqldelight = "2.0.2"
-koin = "4.0.0"
+koin = "4.0.2"
 startupRuntime = "1.2.0"
-statelyCommon = "2.0.5"
-materialKolor = "2.0.0"
-junitJupiter = "5.8.1"
-kotlinStdlib = "2.1.0"
-runner = "1.5.2"
-core = "1.5.0"
-skie = "0.10.0"
+statelyCommon = "2.1.0"
+materialKolor = "2.0.2"
+junitJupiter = "5.12.1"
+kotlinStdlib = "2.1.10"
+runner = "1.6.2"
+core = "1.6.1"
+skie = "0.10.1"
 kover = "0.9.1"
 foojayResolverConvention = "0.8.0"
 
@@ -73,10 +68,10 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 mockk-common = { module = "io.mockk:mockk-common", version.ref = "mockk" }
-multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettingsSerialization" }
-multiplatform-settings-datastore = { module = "com.russhwolf:multiplatform-settings-datastore", version.ref = "multiplatformSettingsDatastore" }
-multiplatform-settings-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettingsSerialization" }
-multiplatform-settings-serialization = { module = "com.russhwolf:multiplatform-settings-serialization", version.ref = "multiplatformSettingsSerialization" }
+multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
+multiplatform-settings-datastore = { module = "com.russhwolf:multiplatform-settings-datastore", version.ref = "multiplatformSettings" }
+multiplatform-settings-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
+multiplatform-settings-serialization = { module = "com.russhwolf:multiplatform-settings-serialization", version.ref = "multiplatformSettings" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
