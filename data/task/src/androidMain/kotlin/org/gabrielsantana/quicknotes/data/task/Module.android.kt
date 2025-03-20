@@ -1,6 +1,8 @@
 package org.gabrielsantana.quicknotes.data.task
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import org.gabrielsantana.quicknotes.data.task.driver.AndroidDatabaseDriverFactory
 import org.gabrielsantana.quicknotes.data.task.worker.SyncTaskRemotelyWorker
 import org.gabrielsantana.quicknotes.data.task.worker.TaskDeleteSyncerWorker
@@ -19,7 +21,7 @@ actual val specificPlatformModule: Module = module {
     factory<DatabaseDriverFactory> {
         AndroidDatabaseDriverFactory(get())
     }
-    single {
+    single<DataStore<Preferences>> {
         val context: Context = get()
         createDataStore(producePath = { fileName -> context.filesDir.resolve(fileName).absolutePath })
     }

@@ -4,9 +4,9 @@ CREATE TABLE IF NOT EXISTS TaskEntity (
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     isCompleted INTEGER AS kotlin.Boolean NOT NULL,
-    completedAtTimestamp TEXT,
-    createdAtTimestamp TEXT NOT NULL,
-    updatedAtTimestamp TEXT NOT NULL,
+    completedAtTimestamp TEXT AS kotlinx.datetime.Instant,
+    createdAtTimestamp TEXT AS kotlinx.datetime.Instant NOT NULL,
+    updatedAtTimestamp TEXT AS kotlinx.datetime.Instant NOT NULL,
     PRIMARY KEY(uuid , deviceId)
 );
 

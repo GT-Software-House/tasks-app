@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.gabrielsantana.quicknotes.data.task.TaskDatabase
 import org.gabrielsantana.quicknotes.data.task.TaskEntity
 import org.gabrielsantana.quicknotes.data.task.getDeviceId
@@ -24,7 +25,7 @@ internal class TasksLocalDataSource(private val db: TaskDatabase) {
         title: String,
         description: String,
         isCompleted: Boolean,
-        createdAtTimestamp: String = Clock.System.now().toString(),
+        createdAtTimestamp: Instant = Clock.System.now()
     ): TaskEntity {
         return queries.transactionWithResult {
             val uuid = Uuid.random()
@@ -67,7 +68,7 @@ internal class TasksLocalDataSource(private val db: TaskDatabase) {
         queries.updateIsChecked(
             isCompleted = isChecked,
             uuid = uuid,
-            completedAtTimestamp = if (isChecked) Clock.System.now().toString() else null
+            completedAtTimestamp = if (isChecked) Clock.System.now() else null
         )
     }
 

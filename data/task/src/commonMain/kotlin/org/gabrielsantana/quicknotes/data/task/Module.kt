@@ -6,6 +6,7 @@ import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.datastore.DataStoreSettings
 import org.gabrielsantana.quicknotes.data.task.driver.DatabaseDriverFactory
 import org.gabrielsantana.quicknotes.data.task.source.local.TasksLocalDataSource
+import org.gabrielsantana.quicknotes.data.task.source.local.adapter.InstantColumnAdapter
 import org.gabrielsantana.quicknotes.data.task.source.local.adapter.UuidColumnAdapter
 import org.gabrielsantana.quicknotes.data.task.source.remote.TasksRemoteDataSource
 import org.koin.core.module.Module
@@ -14,9 +15,16 @@ import org.koin.dsl.module
 @OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
 val coreDataModule = module {
     includes(specificPlatformModule)
-    single { TaskDatabase(
-        driver = get<DatabaseDriverFactory>().createDriver(),
-        TaskEntityAdapter = TaskEntity.Adapter(uuidAdapter = UuidColumnAdapter())
+    single {
+        val instantAdapter = InstantColumnAdapter()
+        TaskDatabase(
+            driver = get<DatabaseDriverFactory>().createDriver(),
+            TaskEntityAdapter = TaskEntity.Adapter(
+                uuidAdapter = UuidColumnAdapter(),
+                completedAtTimestampAdapter = instantAdapter,
+                createdAtTimestampAdapter = instantAdapter,
+                updatedAtTimestampAdapter = instantAdapter,
+            )
         )
     }
     factory<TaskSyncer> { TaskSyncer(get(), get(), get()) }

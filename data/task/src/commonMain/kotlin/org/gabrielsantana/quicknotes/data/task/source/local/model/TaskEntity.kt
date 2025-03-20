@@ -13,9 +13,9 @@ internal fun TaskEntity.asTask(): Task = Task(
     title = title,
     description = description,
     isCompleted = isCompleted,
-    createdAt = Instant.parse(createdAtTimestamp),
-    completedAt = completedAtTimestamp?.let { Instant.parse(it) },
-    updatedAt = Instant.parse(updatedAtTimestamp)
+    createdAt = createdAtTimestamp,
+    completedAt = completedAtTimestamp,
+    updatedAt = updatedAtTimestamp
 )
 
 internal fun TaskEntity.asNetworkModel() = TaskNetworkModel(
@@ -24,7 +24,7 @@ internal fun TaskEntity.asNetworkModel() = TaskNetworkModel(
     title = title,
     description = description,
     isCompleted = isCompleted,
-    completedAt = completedAtTimestamp?.toString(),
-    createdAt = createdAtTimestamp.toString(),
-    updatedAt = updatedAtTimestamp.toString()
+    completedAt = completedAtTimestamp,
+    createdAt = createdAtTimestamp,
+    updatedAt = updatedAtTimestamp
 )

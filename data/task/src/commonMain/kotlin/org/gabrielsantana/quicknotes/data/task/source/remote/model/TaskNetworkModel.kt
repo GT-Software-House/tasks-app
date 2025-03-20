@@ -1,5 +1,6 @@
 package org.gabrielsantana.quicknotes.data.task.source.remote.model
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.gabrielsantana.quicknotes.data.task.TaskEntity
@@ -18,11 +19,11 @@ internal data class TaskNetworkModel(
     @SerialName("is_completed")
     val isCompleted: Boolean,
     @SerialName("completed_at")
-    val completedAt: String?,
+    val completedAt: Instant?,
     @SerialName("created_at")
-    val createdAt: String,
+    val createdAt: Instant,
     @SerialName("updated_at")
-    val updatedAt: String
+    val updatedAt: Instant
 )
 
 internal fun TaskNetworkModel.asTaskEntity() = TaskEntity(
