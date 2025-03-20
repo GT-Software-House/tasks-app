@@ -35,7 +35,9 @@ kotlin {
     }
 
     sourceSets {
-
+        all {
+            languageSettings.optIn("kotlin.uuid.ExperimentalUuidApi")
+        }
         androidMain.dependencies {
             implementation(libs.koin.android.workmanager)
             implementation(libs.androidx.startup.runtime)

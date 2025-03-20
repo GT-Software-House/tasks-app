@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalUuidApi::class)
+
 package org.gabrielsantana.quicknotes.feature.home.ui
 
 import androidx.lifecycle.ViewModel
@@ -13,6 +15,8 @@ import kotlinx.coroutines.launch
 import org.gabrielsantana.quicknotes.data.task.TasksRepository
 import org.gabrielsantana.quicknotes.data.task.model.Task
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class HomeViewModel(
     private val tasksRepository: TasksRepository,
@@ -35,21 +39,21 @@ class HomeViewModel(
 //        }
     }
 
-    fun selectTask(taskIndex: Int) = _uiState.update { state ->
-        if (state.selectedTasksIndex.contains(taskIndex)) {
-            state.copy(selectedTasksIndex = state.selectedTasksIndex.toMutableSet().apply { remove(taskIndex) })
+    fun selectTask(task: TaskUiModel) = _uiState.update { state ->
+        if (state.selectedTasksUuid.contains(task.uuid)) {
+            state.copy(selectedTasksUuid = state.selectedTasksUuid.toMutableSet().apply { remove(task.uuid) })
         } else {
-            state.copy(selectedTasksIndex = state.selectedTasksIndex.toMutableSet().apply { add(taskIndex) })
+            state.copy(selectedTasksUuid = state.selectedTasksUuid.toMutableSet().apply { add(task.uuid) })
         }
     }
 
     fun clearSelectedTasks() = _uiState.update { state ->
-        state.copy(selectedTasksIndex = emptySet())
+        state.copy(selectedTasksUuid = emptySet())
     }
 
     fun deleteSelectedTasks(): Unit = with(_uiState.value) {
-        selectedTasksIndex.forEach { taskIndex ->
-            tasksRepository.deleteTask(tasks[taskIndex].uuid)
+        selectedTasksUuid.forEach { taskUuid ->
+            tasksRepository.deleteTask(taskUuid)
         }
         clearSelectedTasks()
     }
@@ -138,6 +142,3 @@ class HomeViewModel(
 }
 
 
-fun Task.toUiModel(): TaskUiModel {
-    return TaskUiModel(uuid, title, description, isCompleted)
-}

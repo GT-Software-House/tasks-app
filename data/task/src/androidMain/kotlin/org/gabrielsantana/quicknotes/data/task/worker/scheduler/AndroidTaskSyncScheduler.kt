@@ -14,6 +14,7 @@ import org.gabrielsantana.quicknotes.data.task.worker.SyncTaskRemotelyWorker
 import org.gabrielsantana.quicknotes.data.task.worker.TaskDeleteSyncerWorker
 import org.gabrielsantana.quicknotes.data.task.worker.TaskUpdateSyncerWorker
 import java.util.concurrent.TimeUnit
+import kotlin.uuid.Uuid
 
 internal class AndroidTaskSyncScheduler(
     private val appContext: Context
@@ -22,12 +23,12 @@ internal class AndroidTaskSyncScheduler(
     private val workManager: WorkManager
         get() = WorkManager.getInstance(appContext)
 
-    override fun scheduleTask(taskUuid: String) {
+    override fun scheduleTask(taskUuid: Uuid) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         val data = Data.Builder()
-            .putString("taskUuid", taskUuid)
+            .putString("taskUuid", taskUuid.toString())
             .build()
         val syncRequest = OneTimeWorkRequestBuilder<SyncTaskRemotelyWorker>()
             .setConstraints(constraints)
@@ -42,17 +43,18 @@ internal class AndroidTaskSyncScheduler(
         workManager.enqueue(syncRequest)
     }
 
-    override fun scheduleDelete(taskUuid: String) {
+    override fun scheduleDelete(taskUuid: Uuid) {
+        val taskUuidString = taskUuid.toString()
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         val data = Data.Builder()
-            .putString("taskUuid", taskUuid)
+            .putString("taskUuid", taskUuidString)
             .build()
         val syncRequest = OneTimeWorkRequestBuilder<TaskDeleteSyncerWorker>()
             .setConstraints(constraints)
             .setInputData(data)
-            .addTag(buildTag(taskUuid))
+            .addTag(buildTag(taskUuidString))
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
@@ -63,9 +65,10 @@ internal class AndroidTaskSyncScheduler(
         workManager.enqueue(syncRequest)
     }
 
-    override fun scheduleTaskUpdate(taskUuid: String) {
+    override fun scheduleTaskUpdate(taskUuid: Uuid) {
         //If we have a scheduled update for determinate task, we don't need to schedule another
-        if (alreadyHaveWorksForTask(taskUuid)) {
+        val taskUuidString = taskUuid.toString()
+        if (alreadyHaveWorksForTask(taskUuidString)) {
             return
         }
 
@@ -73,12 +76,12 @@ internal class AndroidTaskSyncScheduler(
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         val data = Data.Builder()
-            .putString("taskUuid", taskUuid)
+            .putString("taskUuid", taskUuidString)
             .build()
         val syncRequest = OneTimeWorkRequestBuilder<TaskUpdateSyncerWorker>()
             .setConstraints(constraints)
             .setInputData(data)
-            .addTag(buildTag(taskUuid))
+            .addTag(buildTag(taskUuidString))
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,

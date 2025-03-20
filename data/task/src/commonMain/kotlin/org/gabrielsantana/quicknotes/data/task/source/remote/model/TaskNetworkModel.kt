@@ -3,11 +3,12 @@ package org.gabrielsantana.quicknotes.data.task.source.remote.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.gabrielsantana.quicknotes.data.task.TaskEntity
+import kotlin.uuid.Uuid
 
 @Serializable
 internal data class TaskNetworkModel(
     @SerialName("uuid")
-    val uuid: String,
+    val uuid: Uuid,
     @SerialName("device_id")
     val deviceId: String,
     @SerialName("title")

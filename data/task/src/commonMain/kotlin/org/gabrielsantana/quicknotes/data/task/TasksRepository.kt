@@ -6,13 +6,14 @@ import org.gabrielsantana.quicknotes.data.task.model.Task
 import org.gabrielsantana.quicknotes.data.task.scheduler.TaskSyncScheduler
 import org.gabrielsantana.quicknotes.data.task.source.local.TasksLocalDataSource
 import org.gabrielsantana.quicknotes.data.task.source.local.model.asTask
+import kotlin.uuid.Uuid
 
 interface TasksRepository : Syncer {
     fun getTasks(): Flow<List<Task>>
-    fun deleteTask(uuid: String)
-    fun getTaskById(uuid: String): Task?
-    fun updateTask(uuid: String, isChecked: Boolean)
-    fun updateTaskTitleAndDescription(uuid: String, title: String, description: String)
+    fun deleteTask(uuid: Uuid)
+    fun getTaskById(uuid: Uuid): Task?
+    fun updateTask(uuid: Uuid, isChecked: Boolean)
+    fun updateTaskTitleAndDescription(uuid: Uuid, title: String, description: String)
     fun createTask(title: String, description: String, isCompleted: Boolean = false)
 }
 
@@ -29,19 +30,19 @@ internal class TasksRepositoryImpl(
         it.map { entity -> entity.asTask() }.sortedBy { it.createdAt.epochSeconds }
     }
 
-    override fun deleteTask(uuid: String) {
+    override fun deleteTask(uuid: Uuid) {
         localDataSource.delete(uuid)
         taskSyncScheduler.scheduleDelete(uuid)
     }
 
-    override fun getTaskById(uuid: String): Task? = localDataSource.getById(uuid)?.asTask()
+    override fun getTaskById(uuid: Uuid): Task? = localDataSource.getById(uuid)?.asTask()
 
-    override fun updateTask(uuid: String, isChecked: Boolean) {
+    override fun updateTask(uuid: Uuid, isChecked: Boolean) {
         localDataSource.updateIsChecked(uuid, isChecked)
         taskSyncScheduler.scheduleTaskUpdate(uuid)
     }
 
-    override fun updateTaskTitleAndDescription(uuid: String, title: String, description: String) {
+    override fun updateTaskTitleAndDescription(uuid: Uuid, title: String, description: String) {
         localDataSource.updateTitleAndDescription(uuid, title, description)
         taskSyncScheduler.scheduleTaskUpdate(uuid)
     }

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS TaskEntity (
-    uuid TEXT NOT NULL,
+    uuid TEXT AS kotlin.uuid.Uuid NOT NULL,
     deviceId TEXT NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,

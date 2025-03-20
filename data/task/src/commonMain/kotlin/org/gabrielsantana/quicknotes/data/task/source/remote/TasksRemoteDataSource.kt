@@ -13,6 +13,7 @@ import io.github.jan.supabase.realtime.selectAsFlow
 import kotlinx.coroutines.flow.Flow
 import org.gabrielsantana.quicknotes.data.task.source.remote.model.TaskNetworkModel
 import org.gabrielsantana.quicknotes.data.task.source.remote.model.TaskTransaction
+import kotlin.uuid.Uuid
 
 internal class TasksRemoteDataSource(
     private val supabaseClient: SupabaseClient
@@ -38,8 +39,8 @@ internal class TasksRemoteDataSource(
         return count > 0L
     }
 
-    suspend fun getByIds(uuids: List<String>): List<TaskNetworkModel> {
-        return supabaseClient.from(TABLE_NAME_TASKS).select() {
+    suspend fun getByIds(uuids: List<Uuid>): List<TaskNetworkModel> {
+        return supabaseClient.from(TABLE_NAME_TASKS).select {
             filter {
                 TaskNetworkModel::uuid isIn uuids
             }

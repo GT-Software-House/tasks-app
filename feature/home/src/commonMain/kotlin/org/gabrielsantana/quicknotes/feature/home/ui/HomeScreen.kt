@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
 
 package org.gabrielsantana.quicknotes.feature.home.ui
 
@@ -34,6 +34,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.random.Random
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @Composable
 fun HomeScreen(
@@ -66,11 +68,11 @@ fun HomeScreen(
         onCreateTaskClick = onNavigateToCreateTask,
         onTaskCheckedChange = viewModel::updateTask,
         onSelectTaskFilter = viewModel::selectTaskFilter,
-        onSelectTaskIndex = viewModel::selectTask,
+        onSelectTask = viewModel::selectTask,
         onClearSelection = viewModel::clearSelectedTasks,
         onDeleteClick = viewModel::deleteSelectedTasks,
         onSettingsClick = onNavigateToSettings,
-        onTaskClick = onNavigateToEditTask,
+        onTaskClick = { onNavigateToEditTask(it.uuid.toString()) },
         onRefresh = viewModel::refresh
     )
 }
@@ -83,9 +85,9 @@ fun HomeContent(
     onCreateTaskClick: () -> Unit,
     onSelectTaskFilter: (TaskFilter) -> Unit,
     onSettingsClick: () -> Unit,
-    onSelectTaskIndex: (Int) -> Unit,
+    onSelectTask: (TaskUiModel) -> Unit,
     onClearSelection: () -> Unit,
-    onTaskClick: (String) -> Unit,
+    onTaskClick: (TaskUiModel) -> Unit,
     onTaskCheckedChange: (newValue: Boolean, model: TaskUiModel) -> Unit,
     onDeleteClick: () -> Unit,
     onRefresh: () -> Unit,
@@ -128,9 +130,7 @@ fun HomeContent(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
-        PullToRefreshBox(
-            isRefreshing = uiState.isRefreshing,
-            onRefresh = onRefresh,
+        Box(
             modifier = Modifier.padding(paddingValues)
         ) {
             LazyColumn(
@@ -160,28 +160,27 @@ fun HomeContent(
                     Spacer(Modifier.height(4.dp))
                 }
                 items(uiState.tasks, key = { task -> task.uuid }) { task ->
-                    val taskIndex = uiState.tasks.indexOf(task)
                     TaskItem(
                         title = task.title,
                         description = task.description,
                         isChecked = task.isChecked,
                         isCheckable = !uiState.isSelectionMode,
                         onCheckedChange = { onTaskCheckedChange(it, task) },
-                        isSelected = uiState.selectedTasksIndex.contains(uiState.tasks.indexOf(task)),
+                        isSelected = uiState.selectedTasksUuid.contains(task.uuid),
                         modifier = Modifier
                             .animateItem()
                             .clip(CardDefaults.shape)
                             .combinedClickable(
                                 onLongClick = {
                                     if (!uiState.isSelectionMode) {
-                                        onSelectTaskIndex(taskIndex)
+                                        onSelectTask(task)
                                     }
                                 },
                                 onClick = {
                                     if (uiState.isSelectionMode) {
-                                        onSelectTaskIndex(taskIndex)
+                                        onSelectTask(task)
                                     } else {
-                                        onTaskClick(task.uuid)
+                                        onTaskClick(task)
                                     }
                                 }
                             ).fillMaxWidth(),
@@ -250,7 +249,7 @@ private fun SelectionTopAppBar(
     onDeleteClick: () -> Unit
 ) {
     TopAppBar(
-        title = { Text(uiState.selectedTasksIndex.size.toString()) },
+        title = { Text(uiState.selectedTasksUuid.size.toString()) },
         scrollBehavior = scrollBehavior,
         navigationIcon = {
             IconButton(onClick = onClearSelection) {
@@ -384,19 +383,19 @@ private fun TaskItemPreview() {
 @Composable
 private fun DefaultPreview() {
     val tasks = listOf(
-        TaskUiModel(Random.nextInt().toString(), "Task 1", "Description 1", false),
-        TaskUiModel(Random.nextInt().toString(), "Task 2", "Description 2", true),
-        TaskUiModel(Random.nextInt().toString(), "Task 3", "Description 3", false),
+        TaskUiModel(Uuid.random(), "Task 1", "Description 1", false),
+        TaskUiModel(Uuid.random(), "Task 2", "Description 2", true),
+        TaskUiModel(Uuid.random(), "Task 3", "Description 3", false),
     )
     HomeContent(
         uiState = HomeUiState(
             tasks = tasks,
-            selectedTasksIndex = setOf(1, 2)
+            selectedTasksUuid = setOf(tasks[0].uuid, tasks[1].uuid)
         ),
         onCreateTaskClick = {},
         onTaskCheckedChange = { _, _ -> },
         onSelectTaskFilter = {},
-        onSelectTaskIndex = {},
+        onSelectTask = {},
         onClearSelection = {},
         onDeleteClick = {},
         onSettingsClick = {},
@@ -411,12 +410,11 @@ private fun EmptyTasksPreview() {
     HomeContent(
         uiState = HomeUiState(
             tasks = listOf(),
-            selectedTasksIndex = setOf(1, 2)
         ),
         onCreateTaskClick = {},
         onTaskCheckedChange = { _, _ -> },
         onSelectTaskFilter = {},
-        onSelectTaskIndex = {},
+        onSelectTask = {},
         onClearSelection = {},
         onDeleteClick = {},
         onSettingsClick = {},

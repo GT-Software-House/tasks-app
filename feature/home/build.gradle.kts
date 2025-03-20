@@ -32,6 +32,9 @@ kotlin {
     }
 
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.uuid.ExperimentalUuidApi")
+        }
         commonMain.dependencies {
             implementation(libs.kotlin.stdlib)
             implementation(compose.runtime)

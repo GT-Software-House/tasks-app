@@ -10,6 +10,7 @@ import org.gabrielsantana.quicknotes.data.task.source.remote.model.Operation
 import org.gabrielsantana.quicknotes.data.task.source.remote.model.TaskTransaction
 import org.gabrielsantana.quicknotes.data.task.source.remote.model.asTaskEntity
 import kotlin.collections.map
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class TaskSyncer(
@@ -44,7 +45,7 @@ internal class TaskSyncer(
             .collect()
     }
 
-    override suspend fun syncToRemote(taskUuid: String): Boolean {
+    override suspend fun syncToRemote(taskUuid: Uuid): Boolean {
         //here we can have a problem on finding the task or the task just has been deleted. How to diff the cases?
         val task = localDataSource.getById(taskUuid) ?: return true
         return remoteDataSource.upsert(task.asNetworkModel())
