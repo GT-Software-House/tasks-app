@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.gabrielsantana.quicknotes.data.task.TasksRepository
 import org.gabrielsantana.quicknotes.ui.AppScreens
+import kotlin.uuid.Uuid
 
 class CreateTaskViewModel(
     savedStateHandle: SavedStateHandle,
@@ -25,9 +26,9 @@ class CreateTaskViewModel(
 
     private fun switchToEditModeIfNeeded(savedStateHandle: SavedStateHandle) {
         viewModelScope.launch {
-            val route = savedStateHandle.toRoute<AppScreens.CreateTask>()
-            if (route.taskUuid == null) return@launch
-            val task = tasksRepository.getTaskById(route.taskUuid)
+            val taskUuid = savedStateHandle.toRoute<AppScreens.CreateTask>().taskUuid?.let { Uuid.parse(it) }
+            if (taskUuid == null) return@launch
+            val task = tasksRepository.getTaskById(taskUuid)
             if (task == null) return@launch
 
             _uiState.update {

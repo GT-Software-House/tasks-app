@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import org.gabrielsantana.quicknotes.data.task.TasksRepository
+import kotlin.uuid.Uuid
 
 internal class TaskUpdateSyncerWorker(
     private val supabaseClient: SupabaseClient,
@@ -20,7 +21,7 @@ internal class TaskUpdateSyncerWorker(
             try {
                 //need to load the session manually because it's cleaned on app close
                 supabaseClient.auth.loadFromStorage()
-                val syncedSuccessfully = tasksRepository.syncToRemote(taskUuid)
+                val syncedSuccessfully = tasksRepository.syncToRemote(Uuid.parse(taskUuid))
                 if (!syncedSuccessfully) return Result.failure()
                 return Result.success()
             } catch (e: Exception) {

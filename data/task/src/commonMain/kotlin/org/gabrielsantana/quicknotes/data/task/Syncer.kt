@@ -1,6 +1,7 @@
 package org.gabrielsantana.quicknotes.data.task
 
 import kotlinx.coroutines.flow.Flow
+import kotlin.uuid.Uuid
 
 interface Syncer {
     suspend fun oneTimeSync()
@@ -9,7 +10,7 @@ interface Syncer {
     /**
      * @return if the data was synced successfully
      */
-    suspend fun syncToRemote(taskUuid: String): Boolean
+    suspend fun syncToRemote(taskUuid: Uuid): Boolean
 }
 
 internal interface SyncerPreferences {

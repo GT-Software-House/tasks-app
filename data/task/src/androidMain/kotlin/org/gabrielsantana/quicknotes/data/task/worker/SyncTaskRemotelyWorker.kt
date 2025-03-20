@@ -9,6 +9,7 @@ import io.github.jan.supabase.auth.auth
 import org.gabrielsantana.quicknotes.data.task.source.local.TasksLocalDataSource
 import org.gabrielsantana.quicknotes.data.task.source.local.model.asNetworkModel
 import org.gabrielsantana.quicknotes.data.task.source.remote.TasksRemoteDataSource
+import kotlin.uuid.Uuid
 
 internal class SyncTaskRemotelyWorker(
     private val supabaseClient: SupabaseClient,
@@ -22,7 +23,7 @@ internal class SyncTaskRemotelyWorker(
         if (taskId != null) {
             try {
                 //here we can have a problem on finding the task or the task just has been deleted. How to diff the cases?
-                val task = tasksLocalDataSource.getById(taskId) ?: return Result.success()
+                val task = tasksLocalDataSource.getById(Uuid.parse(taskId)) ?: return Result.success()
                 //need to load the session manually because it's cleaned on app close
                 supabaseClient.auth.loadFromStorage()
                 tasksRemoteDataSource.insert(task.asNetworkModel())

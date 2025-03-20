@@ -27,7 +27,7 @@ internal class TasksLocalDataSource(private val db: TaskDatabase) {
         createdAtTimestamp: String = Clock.System.now().toString(),
     ): TaskEntity {
         return queries.transactionWithResult {
-            val uuid = Uuid.random().toString()
+            val uuid = Uuid.random()
             db.taskQueries.insert(
                 uuid = uuid,
                 deviceId = getDeviceId(),
@@ -59,11 +59,11 @@ internal class TasksLocalDataSource(private val db: TaskDatabase) {
 
     fun getAll(): Flow<List<TaskEntity>> = queries.getAll().asFlow().mapToList(Dispatchers.IO)
 
-    fun delete(uuid: String) {
+    fun delete(uuid: Uuid) {
         queries.delete(uuid = uuid)
     }
 
-    fun updateIsChecked(uuid: String, isChecked: Boolean) {
+    fun updateIsChecked(uuid: Uuid, isChecked: Boolean) {
         queries.updateIsChecked(
             isCompleted = isChecked,
             uuid = uuid,
@@ -71,7 +71,7 @@ internal class TasksLocalDataSource(private val db: TaskDatabase) {
         )
     }
 
-    fun updateTitleAndDescription(uuid: String, title: String, description: String) {
+    fun updateTitleAndDescription(uuid: Uuid, title: String, description: String) {
         queries.updateTitleAndDescription(title = title, description = description, uuid = uuid)
     }
 
@@ -81,7 +81,7 @@ internal class TasksLocalDataSource(private val db: TaskDatabase) {
      * @param id The unique identifier of the TaskEntity to retrieve.
      * @return The TaskEntity with the specified ID, or null if no such entity exists.
      */
-    fun getById(uuid: String): TaskEntity? {
+    fun getById(uuid: Uuid): TaskEntity? {
         return try {
             queries.getById(uuid = uuid).executeAsOne()
         } catch (_: NullPointerException) {

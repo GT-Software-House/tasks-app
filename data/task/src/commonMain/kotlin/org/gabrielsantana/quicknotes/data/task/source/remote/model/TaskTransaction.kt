@@ -2,6 +2,7 @@ package org.gabrielsantana.quicknotes.data.task.source.remote.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.uuid.Uuid
 
 @Serializable
 internal data class TaskTransaction(
@@ -9,7 +10,7 @@ internal data class TaskTransaction(
     @SerialName("created_at")
     val createdAt: String,
     @SerialName("task_id")
-    val taskUuid: String,
+    val taskUuid: Uuid,
     val operation: Operation,
 )
 
